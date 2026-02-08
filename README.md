@@ -2,63 +2,50 @@
 
 > *"Dr. Daystrom would be proud."*
 
-Two hemispheres. One voice. Smart AI on a budget.
+**Proof of concept:** Does dual-hemisphere AI processing actually work?
 
 ---
 
-**Duotronics** is an open-source cognitive architecture that makes local LLMs meaningfully smarter through structured, multi-pass processing — inspired by the human brain's hemispheric specialization.
+## What This Is
 
-Run it on a gaming PC. Keep your data private. Get results that don't feel like talking to a brick.
+A simple experiment: Instead of asking one AI model for an answer, we ask **two models working in sequence** — like the left and right hemispheres of a brain.
+
+**Hemisphere 1 (Logic):** Focuses on accuracy, structure, facts  
+**Hemisphere 2 (Artist):** Adds warmth, voice, humanity
+
+**The question:** Does this produce meaningfully better results than a single model?
 
 ---
 
-## Why This Exists
+## Why Test This?
 
-Local LLMs are amazing: free, private, yours. But let's be honest — they feel *dumb* compared to GPT-4 or Claude. Not because they're broken, but because they're smaller. And we can't change that.
+We can't make local LLMs as smart as GPT-4 by throwing more compute at them. But maybe we can make them **more complete** by adding **structure**.
 
-**But we can change how we use them.**
-
-Duotronics adds *structure* where we can't add *scale*:
-- **Two processing passes** instead of one
-- **Specialized "hemispheres"** with different strengths
-- **Optional learning** that improves quality over time
-- **Privacy-first** design — your data stays on your machine
-
-The result: local AI that feels more complete, more human, more *useful*.
+This project lets you:
+- ✅ Test the hypothesis with real conversations
+- ✅ Compare dual-hemisphere vs single-model outputs
+- ✅ Tweak the prompts and see what works
+- ✅ Run it on any computer (no GPU needed)
 
 ---
 
 ## How It Works
 
-### Mode 1: Refine (Quality Now)
-
-Your query passes through two "hemispheres":
+Your message passes through two processing stages:
 
 ```
-[You] → [Logic Brain: Local] → [Artist Brain: API] → [Response]
+[Your Question]
+       ↓
+[Logic Hemisphere] — Analyzes, structures, gets facts right
+   (Anthropic Claude recommended)
+       ↓
+[Artist Hemisphere] — Refines for voice, rhythm, humanity
+   (OpenAI GPT-4 recommended)
+       ↓
+[Final Response]
 ```
 
-1. **Logic hemisphere** (local): Analyzes, structures, gets the facts right
-2. **Artist hemisphere** (API or local): Adds voice, rhythm, humanity
-
-Same truth, but alive.
-
-### Mode 2: Learn (Quality Over Time)
-
-The system gets smarter with use:
-
-```
-[You] → [Local: Attempt] → [Confident?] → Yes → [Response]
-                               ↓ No
-                    [API: Refine + Teach]
-                               ↓
-                    [Store in Memory]
-```
-
-Every API call *teaches* the local system. Over time:
-- More queries handled locally
-- API costs decrease
-- Your AI develops expertise in *your* domains
+Both hemispheres are **cloud APIs** — no local models, no GPU required.
 
 ---
 
@@ -70,133 +57,124 @@ git clone https://github.com/DevCabin/duotronics.git
 cd duotronics
 
 # Install
-pip install -r requirements.txt
-
-# Configure
-cp config.example.yaml config.yaml
-# Edit config.yaml with your model paths and (optional) API keys
+npm install
 
 # Run
-python duotronics.py "What's the best way to learn Python?"
+npm run dev
+# Open http://localhost:3000
 ```
+
+**First run:** The wizard will walk you through:
+1. Enter API key for Logic hemisphere (Anthropic or OpenAI)
+2. Enter API key for Artist hemisphere (OpenAI or Anthropic)
+3. Test both connections
+4. Start chatting
 
 ---
 
 ## Requirements
 
-### v1 (Current - API Only)
-
 **Any computer that can run Node.js:**
 - MacBook Air ✅
 - Windows laptop ✅
 - Linux desktop ✅
-- **RAM:** 4GB+ (8GB comfortable)
-- **Storage:** 500MB for the app
 
 **You need:**
 - Node.js 18+
-- Two API keys (Anthropic, OpenAI, or mix)
+- Two API keys (Anthropic Claude + OpenAI GPT-4 recommended)
 - Internet connection
 
-**No GPU required!** This version uses cloud APIs for both hemispheres.
+**No GPU required!** This is an API-only proof of concept.
 
 ---
 
-### v2 (Future - Local Models)
+## Measuring Success
 
-When we add local model support, you'll want:
+The point is to **test the hypothesis**. Here's how:
 
-| Tier | Use Case | Hardware |
-|------|----------|----------|
-| **Minimum** | Testing, light use | 8GB VRAM GPU, 16GB RAM |
-| **Recommended** | Daily use | 12GB VRAM GPU, 32GB RAM |
-| **Optimal** | Power user | 24GB VRAM GPU, 32GB+ RAM |
+1. **Blind comparison:** Show someone two responses (dual-hemisphere vs single model). Which do they prefer?
+2. **Subjective feel:** Does the output feel more "complete" or "human"?
+3. **Factual accuracy:** Does the Artist break the Logic hemisphere's facts?
+4. **Latency:** Is the extra API call worth the quality gain?
 
-See **[EQUIPMENT.md](./EQUIPMENT.md)** for detailed hardware recommendations and budget builds.
+We're not claiming this definitely works — we're **testing if it works**.
 
 ---
 
 ## Configuration
 
+After the wizard, your config is saved to `config.yaml`:
+
 ```yaml
-# config.yaml
-mode: refine  # or "learn"
+logic:
+  provider: anthropic
+  apiKey: sk-ant-...
+  model: claude-sonnet-4-5
 
-hemispheres:
-  logic:
-    backend: ollama
-    model: mistral:7b
-    
-  artist:
-    backend: openai  # or "ollama" for full local
-    model: gpt-4o
-
-privacy:
-  mode: hybrid  # "local", "hybrid", or "learning"
-  strip_pii: true
-
-personality:
-  name: "Assistant"
-  voice: "Warm, direct, slightly witty"
+artist:
+  provider: openai
+  apiKey: sk-...
+  model: gpt-4o
 ```
 
----
-
-## Privacy Modes
-
-| Mode | Description | Data Leaves Machine? |
-|------|-------------|----------------------|
-| 🔒 `local` | Everything runs locally | Never |
-| 🔓 `hybrid` | Local logic, API artist | Yes (queries to API) |
-| 📚 `learning` | API early, decreasing over time | Yes, but less over time |
+You can edit this to try different model combinations.
 
 ---
 
 ## Roadmap
 
-- [x] Core architecture design
-- [ ] Basic orchestrator (Mode 1: Refine)
-- [ ] Learning mode with vector storage
-- [ ] Confidence-based routing
-- [ ] Personality system
-- [ ] Web UI
-- [ ] One-click installers
+- [x] Wizard for API key setup
+- [x] Chat interface with dual-hemisphere processing
+- [x] Visual indicator showing Logic → Artist flow
+- [ ] Side-by-side comparison mode (dual vs single)
+- [ ] Export conversation logs for analysis
+- [ ] Prompt tuning UI
+- [ ] Cost tracking per conversation
+
+---
+
+## What This Is NOT
+
+This project is **not**:
+- ❌ A production-ready chat app
+- ❌ A local model runner (no Ollama/LM Studio here)
+- ❌ A learning/RAG system that improves over time
+
+For local models and learning systems, see the **Autodidactica** project (coming soon).
 
 ---
 
 ## Philosophy
 
-1. **VRAM > Everything.** Spend your budget on GPU memory.
-2. **Privacy by default.** Local unless you choose otherwise.
-3. **Honest about limits.** Local 7B won't match GPT-4. But it can get *closer*.
-4. **Accessible.** If you have a gaming PC, you can run this.
+1. **Test, don't assume.** We're proving (or disproving) the concept.
+2. **Keep it simple.** Dual API only. No complexity.
+3. **Measure honestly.** If it doesn't work, we'll say so.
 
 ---
 
 ## Contributing
 
-We're just getting started. Contributions welcome:
-- Code improvements
-- Documentation
-- Hardware testing on different configs
-- Model recommendations
+This is an experiment. Contributions welcome:
+- Try different model pairings and report results
+- Improve the prompts
+- Add comparison/measurement tools
+- Document what works (and what doesn't)
 
 ---
 
 ## License
 
-[MIT](./LICENSE) — do whatever you want, just don't blame us.
+[MIT](./LICENSE) — Experiment freely.
 
 ---
 
 ## Acknowledgments
 
 Inspired by:
-- The human brain (pretty good design, TBH)
-- [Dr. Richard Daystrom](https://memory-alpha.fandom.com/wiki/Richard_Daystrom) and his duotronic computer systems
+- The human brain's hemispheric specialization
+- [Dr. Richard Daystrom](https://memory-alpha.fandom.com/wiki/Richard_Daystrom) and duotronic computers
 - Marvin Minsky's "Society of Mind"
-- Everyone who said local AI "isn't good enough" (challenge accepted)
 
 ---
 
-*Built with 🧠 by [DevCabin](https://devcabin.com) and friends.*
+*Built with 🧠 by [DevCabin](https://devcabin.com)*

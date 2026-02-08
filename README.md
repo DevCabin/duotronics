@@ -140,7 +140,7 @@ This project is **not**:
 - ❌ A local model runner (no Ollama/LM Studio here)
 - ❌ A learning/RAG system that improves over time
 
-For local models and learning systems, see the **Autodidactica** project (coming soon).
+For local models and learning systems, see **[Duotronics M-1](https://github.com/DevCabin/duotronics-m1)**.
 
 ---
 
@@ -159,6 +159,13 @@ This is an experiment. Contributions welcome:
 - Improve the prompts
 - Add comparison/measurement tools
 - Document what works (and what doesn't)
+
+---
+
+## Related Projects
+
+🔬 **Duotronics** (this repo) — Proof of concept with dual APIs  
+🧠 **[Duotronics M-1](https://github.com/DevCabin/duotronics-m1)** — Learning system with local models
 
 ---
 

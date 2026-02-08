@@ -84,22 +84,35 @@ python duotronics.py "What's the best way to learn Python?"
 
 ## Requirements
 
-### Minimum Hardware
-- **GPU:** 12GB VRAM (RTX 3060, 3080, etc.)
-- **RAM:** 16GB (32GB recommended)
-- **Storage:** 20GB free for models
+### v1 (Current - API Only)
 
-### Recommended Hardware
-- **GPU:** 24GB VRAM (RTX 3090, 4090)
-- **RAM:** 32GB
-- **Storage:** 100GB+ for multiple models
+**Any computer that can run Node.js:**
+- MacBook Air ✅
+- Windows laptop ✅
+- Linux desktop ✅
+- **RAM:** 4GB+ (8GB comfortable)
+- **Storage:** 500MB for the app
+
+**You need:**
+- Node.js 18+
+- Two API keys (Anthropic, OpenAI, or mix)
+- Internet connection
+
+**No GPU required!** This version uses cloud APIs for both hemispheres.
+
+---
+
+### v2 (Future - Local Models)
+
+When we add local model support, you'll want:
+
+| Tier | Use Case | Hardware |
+|------|----------|----------|
+| **Minimum** | Testing, light use | 8GB VRAM GPU, 16GB RAM |
+| **Recommended** | Daily use | 12GB VRAM GPU, 32GB RAM |
+| **Optimal** | Power user | 24GB VRAM GPU, 32GB+ RAM |
 
 See **[EQUIPMENT.md](./EQUIPMENT.md)** for detailed hardware recommendations and budget builds.
-
-### Software
-- Python 3.10+
-- [Ollama](https://ollama.ai/) or [LM Studio](https://lmstudio.ai/)
-- (Optional) OpenAI or Anthropic API key for hybrid mode
 
 ---
 

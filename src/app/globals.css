@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  min-height: 100vh;
+}
+
+/* Pulsing glow for the brain icon */
+@keyframes brain-pulse {
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5)); }
+  50% { filter: drop-shadow(0 0 25px rgba(139, 92, 246, 0.8)); }
+}
+
+.brain-glow {
+  animation: brain-pulse 2s ease-in-out infinite;
+}
+
+/* Hemisphere indicators */
+.logic-glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+.artist-glow { box-shadow: 0 0 20px rgba(236, 72, 153, 0.3); }
+
+/* Chat message animations */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.message-appear {
+  animation: fade-in 0.3s ease-out;
+}

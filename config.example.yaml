@@ -1,0 +1,12 @@
+# Duotronics Configuration
+# Copy this to config.yaml and fill in your API keys
+
+logic:
+  provider: anthropic  # anthropic or openai
+  apiKey: sk-ant-your-key-here
+  model: claude-sonnet-4-5
+
+artist:
+  provider: openai  # anthropic or openai
+  apiKey: sk-your-key-here
+  model: gpt-4o

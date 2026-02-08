@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "echo '\n✅ Installation complete!\n\nTo start Duotronics:\n  npm run dev\n\nThen open http://localhost:3000 in your browser.\n'"
   },
   "dependencies": {
     "ai": "^3.0.0",

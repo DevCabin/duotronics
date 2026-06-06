@@ -11,26 +11,7 @@
 A simple experiment: Instead of asking one AI model for an answer, we ask **two models working in sequence** — like the left and right hemispheres of a brain.
 
 ---
-
-### 🔬 New Research: SMEAC Framework for Agentic AI
-
-> *Applying military Marine field tactics to agentic AI reasoning and problem solving*
-
-We've added a new research document exploring how military planning doctrine can improve autonomous AI agent systems:
-
-**[SMEAC-Agentic-Framework-Working-Thesis.md](./SMEAC-Agentic-Framework-Working-Thesis.md)**
-
-**What's inside:**
-- SMEAC (Situation, Mission, Execution, Administration & Logistics, Command & Signal) as a recursive operational loop for AI agents
-- 5-agent architecture proposal for multi-agent systems
-- Memory architecture with persistent state files
-- Safety as a first-class architectural concern
-- Mission profiles for different task types
-- Implementation roadmap
-
-This research may eventually warrant its own dedicated project, but for now it lives here alongside the duotronics experiment as we validate the concepts.
-
-**The thesis:** Agentic AI systems suffer from common failure modes (context drift, premature optimization, lack of coordination) that military planning doctrine has already solved. By encoding SMEAC as the agent's "operating system," we can create more robust, auditable, and mission-focused autonomous systems.
+Removed theoretical planned logic. Replacement flow TBD, something grounded in software not muddy boots.
 
 ---
 

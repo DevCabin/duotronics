@@ -220,7 +220,7 @@ export default function Home() {
         }}>
           A Research Project By{' '}
           <a 
-            href="https://devcabin.com"
+            href="https://duotronics.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
             style={{

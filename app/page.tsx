@@ -158,7 +158,7 @@ export default function Home() {
         zIndex: 0
       }} />
       
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', zIndex: 1, marginBottom: '2.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
         <div className="logo">
           <div className="logo-mark" style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 32, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--navy)' }}>
             <span className="left" style={{ color: 'var(--left)' }}>◐</span> DUOTRONICS <span className="right" style={{ color: 'var(--right)' }}>◑</span>
@@ -200,6 +200,8 @@ export default function Home() {
         height: 44,
         position: 'relative',
         zIndex: 1,
+        marginTop: '-1rem',
+        marginBottom: '2.5rem',
         backgroundImage: 'radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.3), transparent), radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.25), transparent), radial-gradient(2px 2px at 90px 40px, rgba(255,255,255,0.35), transparent), radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.3), transparent), radial-gradient(1px 1px at 160px 20px, rgba(255,255,255,0.25), transparent), radial-gradient(2px 2px at 50px 90px, rgba(255,255,255,0.2), transparent)',
         backgroundSize: '180px 100px',
         display: 'flex',
@@ -210,7 +212,7 @@ export default function Home() {
       }}>
         <span style={{
           fontFamily: 'var(--font-display)',
-          fontSize: 10,
+          fontSize: 14,
           fontWeight: 700,
           letterSpacing: '0.3em',
           textTransform: 'uppercase',
@@ -219,9 +221,6 @@ export default function Home() {
           A Research Project By DevCabin
         </span>
       </div>
-
-      {/* Gap */}
-      <div style={{ height: 20 }} />
 
       {/* Context banner */}
       <div style={{

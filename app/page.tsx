@@ -218,7 +218,28 @@ export default function Home() {
           textTransform: 'uppercase',
           color: 'rgba(255,255,255,0.8)'
         }}>
-          A Research Project By DevCabin
+          A Research Project By{' '}
+          <a 
+            href="https://github.com/DevCabin"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: 'rgba(255,255,255,0.9)',
+              textDecoration: 'none',
+              borderBottom: '1px solid rgba(255,255,255,0.3)',
+              transition: 'all 0.15s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--orange)'
+              e.currentTarget.style.borderBottomColor = 'var(--orange)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'rgba(255,255,255,0.9)'
+              e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.3)'
+            }}
+          >
+            DevCabin
+          </a>
         </span>
       </div>
 

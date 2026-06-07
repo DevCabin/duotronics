@@ -194,6 +194,75 @@ export default function Home() {
         </a>
       </div>
 
+      {/* Star field footer row */}
+      <div style={{
+        background: '#0a0a0a',
+        height: 28,
+        position: 'relative',
+        zIndex: 1,
+        marginBottom: 12,
+        backgroundImage: 'radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.15), transparent), radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.1), transparent), radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.2), transparent), radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.15), transparent), radial-gradient(1px 1px at 160px 20px, rgba(255,255,255,0.1), transparent)',
+        backgroundSize: '200px 100px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        padding: '0 16px',
+        borderRadius: 'var(--radius-sm)'
+      }}>
+        <span style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 9,
+          fontWeight: 700,
+          letterSpacing: '0.35em',
+          textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.6)'
+        }}>
+          A Research Project By DevCabin
+        </span>
+      </div>
+
+      {/* Context banner */}
+      <div style={{
+        background: 'var(--offwhite)',
+        border: '1px solid rgba(26,43,60,0.1)',
+        borderRadius: 'var(--radius)',
+        padding: '12px 16px',
+        position: 'relative',
+        zIndex: 1,
+        marginBottom: 20,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 16
+      }}>
+        <p style={{
+          fontSize: 13,
+          lineHeight: 1.5,
+          color: 'var(--navy)',
+          opacity: 0.85,
+          fontFamily: 'var(--font-body)',
+          margin: 0
+        }}>
+          Configure two AI providers to analyze and refine your queries through a six-stage pipeline.
+        </p>
+        <a 
+          href="/about"
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontWeight: 700,
+            fontSize: 10,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            color: 'var(--teal)',
+            textDecoration: 'none',
+            whiteSpace: 'nowrap',
+            flexShrink: 0
+          }}
+        >
+          Learn More →
+        </a>
+      </div>
+
       <div style={{ position: 'relative', zIndex: 1 }}>
         {screen === 'auth' && <Auth onAuth={handleAuth} />}
         {screen === 'wizard' && <Wizard onComplete={() => setScreen('intake')} />}

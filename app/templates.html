@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Space Age '70s — Template Kit</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,400&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── EMBED OF space-age-general.css (self-contained demo) ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{
+  --cream:#F2EDE0;--offwhite:#FAF7F0;--navy:#1A2B3C;
+  --orange:#E06820;--orange-lt:#F4A135;--teal:#2E7FA3;--teal-lt:#5BAFCB;
+  --rust:#8B3A1C;--tan:#C9A86C;
+  --font-display:'Barlow Condensed',sans-serif;--font-body:'Barlow',sans-serif;
+  --radius:4px;--radius-lg:12px;--transition:all 0.15s ease;
+}
+body{background:var(--cream);font-family:var(--font-body);color:var(--navy);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.4;}
+img,video{max-width:100%;display:block}
+a{color:var(--orange);text-decoration:none;transition:color 0.2s}
+a:hover{color:var(--rust)}
+h1,h2,h3,h4,h5{font-family:var(--font-display);font-weight:900;letter-spacing:-0.01em;line-height:0.95;color:var(--navy);text-transform:uppercase}
+h1{font-size:clamp(44px,7vw,88px)} h2{font-size:clamp(28px,4.5vw,52px)} h3{font-size:clamp(20px,3vw,34px)} h4{font-size:clamp(17px,2vw,22px);font-weight:700} h5{font-size:14px;font-weight:700}
+p{font-size:15px;line-height:1.75;margin-bottom:1rem;color:var(--navy)} p:last-child{margin-bottom:0}
+.eyebrow{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:10px}
+.lead{font-size:17px;line-height:1.65;font-weight:500}
+.section-label{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--orange);margin-bottom:8px;display:block}
+.section-label.teal{color:var(--teal)}
+.container{max-width:960px;margin:0 auto;padding:0 24px}
+.container-sm{max-width:620px;margin:0 auto;padding:0 24px}
+
+/* Nav */
+nav.retro-nav{background:var(--navy);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:200;overflow:hidden}
+nav.retro-nav::before{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--orange) 0%,var(--orange-lt) 33%,var(--teal-lt) 66%,var(--teal) 100%)}
+.nav-logo{font-family:var(--font-display);font-weight:900;font-size:22px;color:var(--offwhite);text-transform:uppercase;letter-spacing:0.05em;text-decoration:none}
+.nav-logo span{color:var(--orange-lt)}
+.nav-links{display:flex;gap:28px;list-style:none;align-items:center}
+.nav-links a{font-family:var(--font-display);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(242,237,224,0.65);text-decoration:none;transition:color 0.2s}
+.nav-links a:hover,.nav-links a.active{color:var(--orange-lt)}
+.nav-cta{font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;background:var(--orange);color:var(--offwhite)!important;padding:8px 18px;border-radius:var(--radius);transition:var(--transition)}
+.nav-cta:hover{background:var(--rust)!important}
+
+/* Stripe */
+.stripe-rule{height:8px;background:repeating-linear-gradient(90deg,var(--orange) 0px,var(--orange) 60px,var(--orange-lt) 60px,var(--orange-lt) 120px,var(--teal-lt) 120px,var(--teal-lt) 180px,var(--teal) 180px,var(--teal) 240px)}
+.stripe-rule.thin{height:4px} .stripe-rule.thick{height:14px}
+
+/* Buttons */
+.btn{font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;border:none;cursor:pointer;padding:12px 28px;border-radius:var(--radius);transition:var(--transition);display:inline-flex;align-items:center;gap:8px;text-decoration:none;white-space:nowrap;line-height:1}
+.btn-primary{background:var(--orange);color:var(--offwhite)} .btn-primary:hover{background:var(--rust);color:var(--offwhite);transform:translateY(-1px)}
+.btn-teal{background:var(--teal);color:var(--offwhite)} .btn-teal:hover{background:#1d6585;color:var(--offwhite);transform:translateY(-1px)}
+.btn-secondary{background:transparent;color:var(--navy);border:2px solid var(--navy)} .btn-secondary:hover{background:var(--navy);color:var(--offwhite)}
+.btn-ghost{background:transparent;color:var(--orange);border:2px solid var(--orange)} .btn-ghost:hover{background:var(--orange);color:var(--offwhite)}
+.btn-ghost-teal{background:transparent;color:var(--teal);border:2px solid var(--teal)} .btn-ghost-teal:hover{background:var(--teal);color:var(--offwhite)}
+.btn-sm{padding:7px 16px;font-size:11px} .btn-lg{padding:16px 36px;font-size:15px}
+.btn-full{width:100%;justify-content:center}
+
+/* Cards */
+.card{background:var(--offwhite);border:1px solid rgba(26,43,60,0.1);border-radius:var(--radius-lg);padding:26px 28px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--orange)}
+.card.teal-accent::before{background:var(--teal)} .card.tan-accent::before{background:var(--tan)} .card.no-accent::before{display:none}
+.card.card-dark{background:var(--navy);border-color:rgba(255,255,255,0.08)} .card.card-dark::before{background:var(--orange-lt)}
+.card.card-dark h1,.card.card-dark h2,.card.card-dark h3,.card.card-dark h4,.card.card-dark p{color:var(--offwhite)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+
+/* Badges / Tags */
+.badge{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:2px;display:inline-block}
+.badge-orange{background:var(--orange);color:var(--offwhite)} .badge-teal{background:var(--teal);color:var(--offwhite)} .badge-rust{background:var(--rust);color:var(--offwhite)} .badge-outline{background:transparent;color:var(--navy);border:1.5px solid var(--navy)}
+.tag{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:3px 9px;border:1.5px solid currentColor;border-radius:2px;display:inline-block}
+.tag-orange{color:var(--orange)} .tag-teal{color:var(--teal)} .tag-navy{color:var(--navy)}
+
+/* Stats */
+.stat-number{font-family:var(--font-display);font-weight:900;font-size:52px;line-height:1;color:var(--orange);letter-spacing:-0.02em}
+.stat-number.teal{color:var(--teal)} .stat-number.sm{font-size:32px}
+.stat-label{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--navy);opacity:0.5}
+.stat-row{display:flex;gap:48px;flex-wrap:wrap}
+
+/* Blockquote */
+blockquote{border-left:6px solid var(--orange);padding:16px 24px;background:rgba(224,104,32,0.06);border-radius:0 var(--radius-lg) var(--radius-lg) 0;margin:24px 0}
+blockquote p{font-family:var(--font-display);font-size:19px;font-weight:700;font-style:italic;color:var(--rust);margin-bottom:8px;line-height:1.3}
+blockquote cite{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--navy);opacity:0.45}
+blockquote.teal-quote{border-color:var(--teal);background:rgba(46,127,163,0.06)} blockquote.teal-quote p{color:var(--teal)}
+
+/* Forms */
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+label{font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--navy)}
+input[type=text],input[type=email],input[type=password],input[type=number],input[type=search],select,textarea{font-family:var(--font-body);font-size:15px;padding:11px 14px;border:2px solid rgba(26,43,60,0.18);border-radius:var(--radius);background:var(--offwhite);color:var(--navy);outline:none;transition:border-color 0.2s;width:100%;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--orange)}
+textarea{resize:vertical;min-height:100px}
+
+/* Alerts */
+.alert{padding:14px 20px;border-left:5px solid var(--orange);background:rgba(201,168,108,0.12);border-radius:0 var(--radius) var(--radius) 0;font-size:14px;margin:16px 0}
+.alert strong{font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;display:block;margin-bottom:4px}
+.alert.alert-info{border-color:var(--teal);background:rgba(46,127,163,0.08)}
+
+/* Lists */
+ul.retro-list{list-style:none;padding:0}
+ul.retro-list li{padding:9px 0 9px 22px;position:relative;font-size:15px;border-bottom:1px solid rgba(26,43,60,0.06)}
+ul.retro-list li:last-child{border-bottom:none}
+ul.retro-list li::before{content:'●';position:absolute;left:0;color:var(--orange);font-size:8px;top:14px}
+
+/* Divider */
+.retro-divider{display:flex;align-items:center;gap:16px;margin:40px 0}
+.retro-divider::before,.retro-divider::after{content:'';flex:1;height:1px;background:rgba(26,43,60,0.14)}
+.retro-divider span{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--tan);white-space:nowrap}
+
+/* Footer */
+footer{background:var(--navy);color:rgba(242,237,224,0.55);padding:56px 24px 32px;position:relative;overflow:hidden}
+footer::before{content:'';position:absolute;bottom:-100px;right:-100px;width:300px;height:300px;border-radius:50%;box-shadow:0 0 0 18px rgba(244,161,53,0.18),0 0 0 36px rgba(224,104,32,0.13),0 0 0 54px rgba(91,175,203,0.09);pointer-events:none}
+.footer-logo{font-family:var(--font-display);font-weight:900;font-size:26px;text-transform:uppercase;color:var(--offwhite);margin-bottom:8px;display:inline-block}
+.footer-logo span{color:var(--orange-lt)}
+footer p{color:rgba(242,237,224,0.4);font-size:13px}
+footer a{color:rgba(242,237,224,0.5)} footer a:hover{color:var(--orange-lt)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-top:32px}
+.footer-col h6{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(242,237,224,0.35);margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.footer-col ul li a{font-size:14px}
+.footer-bottom{margin-top:32px;padding-top:16px;border-top:1px solid rgba(242,237,224,0.08);display:flex;align-items:center;justify-content:space-between;font-size:12px;color:rgba(242,237,224,0.28)}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{animation:fadeUp 0.5s ease both}
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}.d4{animation-delay:.4s}
+
+/* ── TEMPLATE PAGE NAV ── */
+.template-switcher{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:1000;display:flex;flex-direction:column;gap:2px}
+.tpl-btn{font-family:var(--font-display);font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;background:var(--navy);color:rgba(242,237,224,0.5);border:none;padding:8px 12px;cursor:pointer;transition:var(--transition);text-align:right;border-left:3px solid transparent;white-space:nowrap}
+.tpl-btn:hover{color:var(--orange-lt);background:#243447}
+.tpl-btn.active{color:var(--orange-lt);border-left-color:var(--orange);background:#243447}
+
+/* ── TEMPLATE SECTIONS ── */
+.template-page{display:none}
+.template-page.active{display:block}
+
+/* ── SECTION PADDING ── */
+.section{padding:64px 0;border-bottom:1px solid rgba(26,43,60,0.08)}
+.section:last-child{border-bottom:none}
+
+/* ── HERO SHARED ── */
+.hero{background:var(--cream);padding:80px 24px 60px;display:flex;gap:48px;align-items:flex-start;max-width:960px;margin:0 auto;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:-80px;right:-80px;width:340px;height:340px;border-radius:50%;box-shadow:0 0 0 20px var(--orange-lt),0 0 0 40px var(--orange),0 0 0 60px var(--teal-lt),0 0 0 80px var(--teal);opacity:0.72;pointer-events:none}
+.hero-body{flex:1;position:relative;z-index:1}
+.hero-aside{width:230px;flex-shrink:0;display:flex;flex-direction:column;gap:14px;position:relative;z-index:1}
+
+/* ── T4: PRICING ── */
+.pricing-card{background:var(--offwhite);border:1px solid rgba(26,43,60,0.1);border-radius:var(--radius-lg);padding:32px;position:relative;overflow:hidden;text-align:center}
+.pricing-card::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:var(--orange)}
+.pricing-card.featured{border-width:2px;border-color:var(--teal)}
+.pricing-card.featured::before{background:var(--teal)}
+.pricing-price{font-family:var(--font-display);font-weight:900;font-size:56px;line-height:1;color:var(--navy);letter-spacing:-0.02em}
+.pricing-price sup{font-size:24px;vertical-align:super;opacity:0.6}
+.pricing-period{font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--navy);opacity:0.4;margin-bottom:20px;display:block}
+.pricing-features{list-style:none;padding:0;margin:20px 0;text-align:left}
+.pricing-features li{padding:8px 0;font-size:14px;border-bottom:1px solid rgba(26,43,60,0.06);display:flex;align-items:center;gap:8px}
+.pricing-features li::before{content:'✦';color:var(--orange);font-size:10px;flex-shrink:0}
+.pricing-card.featured .pricing-features li::before{color:var(--teal)}
+
+/* ── T5: BLOG ── */
+.post-card{background:var(--offwhite);border:1px solid rgba(26,43,60,0.1);border-radius:var(--radius-lg);overflow:hidden}
+.post-card-img{height:180px;background:linear-gradient(135deg,var(--navy) 0%,#243447 100%);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.post-card-img .post-swoosh{position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;box-shadow:0 0 0 12px var(--orange-lt),0 0 0 24px var(--orange),0 0 0 36px var(--teal-lt),0 0 0 48px var(--teal);opacity:0.5}
+.post-card-img span{font-family:var(--font-display);font-weight:900;font-size:48px;color:rgba(242,237,224,0.12);text-transform:uppercase;position:relative;z-index:1}
+.post-card-body{padding:22px 24px}
+.post-meta{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--tan);margin-bottom:8px}
+.post-card-body h4{margin-bottom:10px;line-height:1.2}
+.post-card-body p{font-size:14px;line-height:1.65}
+
+/* ── ABOUT SPLIT ── */
+.about-split{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:var(--radius-lg);overflow:hidden;border:1px solid rgba(26,43,60,0.1)}
+.about-left{background:var(--navy);padding:40px;position:relative;overflow:hidden}
+.about-left::before{content:'';position:absolute;bottom:-60px;left:-60px;width:240px;height:240px;border-radius:50%;box-shadow:0 0 0 16px rgba(244,161,53,0.15),0 0 0 32px rgba(224,104,32,0.1),0 0 0 48px rgba(91,175,203,0.08);pointer-events:none}
+.about-left h2,.about-left h3,.about-left p{color:var(--offwhite)}
+.about-right{background:var(--offwhite);padding:40px}
+
+/* ── CONTACT SPLIT ── */
+.contact-split{display:grid;grid-template-columns:1fr 1.4fr;gap:48px;align-items:start}
+
+/* Responsive */
+@media(max-width:768px){
+  .hero{flex-direction:column} .hero-aside{width:100%} .hero::after{width:200px;height:200px;top:-40px;right:-40px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .about-split{grid-template-columns:1fr}
+  .contact-split{grid-template-columns:1fr}
+  .template-switcher{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ── TEMPLATE SWITCHER ── -->
+<div class="template-switcher">
+  <button class="tpl-btn active" onclick="showTemplate('t1')">T1 · Landing</button>
+  <button class="tpl-btn" onclick="showTemplate('t2')">T2 · About</button>
+  <button class="tpl-btn" onclick="showTemplate('t3')">T3 · Contact</button>
+  <button class="tpl-btn" onclick="showTemplate('t4')">T4 · Pricing</button>
+  <button class="tpl-btn" onclick="showTemplate('t5')">T5 · Blog</button>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     TEMPLATE 1 — LANDING PAGE
+════════════════════════════════════════ -->
+<div class="template-page active" id="t1">
+
+  <nav class="retro-nav">
+    <a href="#" class="nav-logo">Space<span>Age</span></a>
+    <ul class="nav-links">
+      <li><a href="#" class="active">Home</a></li>
+      <li><a href="#">Features</a></li>
+      <li><a href="#">Pricing</a></li>
+      <li><a href="#" class="nav-cta">Get Started</a></li>
+    </ul>
+  </nav>
+  <div class="stripe-rule thick"></div>
+
+  <!-- Hero -->
+  <div class="hero animate-in">
+    <div class="hero-body">
+      <span class="eyebrow">✦ Now in orbit ✦</span>
+      <h1>Your<br>Headline<br><span style="font-style:italic;font-weight:400;font-size:0.6em;color:var(--rust);">Goes</span><br>Here</h1>
+      <p class="lead" style="margin-top:20px;max-width:380px;">A compelling two-sentence value proposition that tells your visitor exactly what you do and why it matters to them.</p>
+      <div style="display:flex;gap:12px;margin-top:28px;flex-wrap:wrap">
+        <a href="#" class="btn btn-primary d2 animate-in">Primary Action</a>
+        <a href="#" class="btn btn-ghost d3 animate-in">Learn More</a>
+      </div>
+    </div>
+    <div class="hero-aside d1 animate-in">
+      <div class="card">
+        <span class="section-label">Featured</span>
+        <h4 style="font-size:19px;margin-bottom:8px">Side Panel<br>Card Title</h4>
+        <p style="font-size:13px">Supporting info, a key stat, or a microtestimonial. Keep it tight — one punchy idea.</p>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <span class="tag tag-orange">Tag One</span>
+          <span class="tag tag-teal">Tag Two</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:24px">
+        <div><div class="stat-number">98%</div><div class="stat-label">Stat One</div></div>
+        <div><div class="stat-number teal">4.9</div><div class="stat-label">Stat Two</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stripe-rule"></div>
+
+  <!-- Feature strip -->
+  <div class="container">
+    <div class="section">
+      <span class="section-label">Features</span>
+      <h2 style="margin-bottom:32px">What You<br>Get</h2>
+      <div class="card-grid">
+        <div class="card animate-in d1">
+          <span class="badge badge-orange" style="margin-bottom:12px">Feature One</span>
+          <h4>Descriptive Title</h4>
+          <p style="font-size:14px;margin-top:8px">Two to three sentences explaining what this feature does and the specific benefit it delivers to the user.</p>
+        </div>
+        <div class="card teal-accent animate-in d2">
+          <span class="badge badge-teal" style="margin-bottom:12px">Feature Two</span>
+          <h4>Descriptive Title</h4>
+          <p style="font-size:14px;margin-top:8px">Two to three sentences explaining what this feature does and the specific benefit it delivers to the user.</p>
+        </div>
+        <div class="card tan-accent animate-in d3">
+          <span class="badge badge-rust" style="margin-bottom:12px">Feature Three</span>
+          <h4>Descriptive Title</h4>
+          <p style="font-size:14px;margin-top:8px">Two to three sentences explaining what this feature does and the specific benefit it delivers to the user.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="retro-divider"><span>Social Proof</span></div>
+
+    <!-- Testimonial + stats row -->
+    <div class="section" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">
+      <div>
+        <span class="section-label">Testimonial</span>
+        <blockquote>
+          <p>"Replace this with a real customer quote. One sentence that captures the core transformation your product delivers."</p>
+          <cite>— Name, Title at Company</cite>
+        </blockquote>
+        <blockquote class="teal-quote" style="margin-top:0">
+          <p>"A second voice adds credibility. Different use case, same transformation story from a different angle."</p>
+          <cite>— Name, Title at Company</cite>
+        </blockquote>
+      </div>
+      <div>
+        <span class="section-label">By the numbers</span>
+        <div class="stat-row" style="margin-top:16px;margin-bottom:32px">
+          <div><div class="stat-number">10K+</div><div class="stat-label">Users</div></div>
+          <div><div class="stat-number teal">230</div><div class="stat-label">Countries</div></div>
+        </div>
+        <ul class="retro-list">
+          <li>Key proof point or differentiator one</li>
+          <li>Key proof point or differentiator two</li>
+          <li>Key proof point or differentiator three</li>
+          <li>Key proof point or differentiator four</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CTA Banner -->
+    <div class="card card-dark" style="margin-bottom:64px;text-align:center;padding:48px">
+      <span class="eyebrow" style="color:var(--orange-lt)">Ready?</span>
+      <h2 style="margin-bottom:16px;color:var(--offwhite)">Your Call<br>To Action</h2>
+      <p style="color:rgba(242,237,224,0.6);max-width:400px;margin:0 auto 28px">One sentence that reinforces urgency or value. Tell them exactly what happens when they click.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a href="#" class="btn btn-primary btn-lg">Primary CTA</a>
+        <a href="#" class="btn btn-ghost-teal">Secondary CTA</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="stripe-rule"></div>
+  <footer>
+    <div class="container">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:48px;flex-wrap:wrap">
+        <div style="max-width:280px">
+          <div class="footer-logo">Space<span>Age</span></div>
+          <p style="margin-top:8px">Your one-line brand promise or tagline. Keep it under ten words.</p>
+        </div>
+        <div class="footer-grid" style="flex:1;margin-top:0">
+          <div class="footer-col">
+            <h6>Product</h6>
+            <ul><li><a href="#">Features</a></li><li><a href="#">Pricing</a></li><li><a href="#">Changelog</a></li></ul>
+          </div>
+          <div class="footer-col">
+            <h6>Company</h6>
+            <ul><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Careers</a></li></ul>
+          </div>
+          <div class="footer-col">
+            <h6>Legal</h6>
+            <ul><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li></ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 SpaceAge. All rights reserved.</span><span>Made with Barlow Condensed & burnt orange.</span></div>
+    </div>
+  </footer>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     TEMPLATE 2 — ABOUT PAGE
+════════════════════════════════════════ -->
+<div class="template-page" id="t2">
+
+  <nav class="retro-nav">
+    <a href="#" class="nav-logo">Space<span>Age</span></a>
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#" class="active">About</a></li>
+      <li><a href="#">Contact</a></li>
+      <li><a href="#" class="nav-cta">Get Started</a></li>
+    </ul>
+  </nav>
+  <div class="stripe-rule thick"></div>
+
+  <!-- About hero — no aside, full width -->
+  <div style="padding:80px 24px 60px;max-width:960px;margin:0 auto;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-80px;right:-80px;width:340px;height:340px;border-radius:50%;box-shadow:0 0 0 20px var(--orange-lt),0 0 0 40px var(--orange),0 0 0 60px var(--teal-lt),0 0 0 80px var(--teal);opacity:0.65;pointer-events:none"></div>
+    <span class="eyebrow">Our Story</span>
+    <h1 style="max-width:600px;position:relative;z-index:1">Who<br>We<br>Are</h1>
+    <p class="lead" style="margin-top:24px;max-width:520px;position:relative;z-index:1">A two-sentence mission statement. Be direct about what you do, who you do it for, and the change you're trying to make in the world.</p>
+  </div>
+
+  <div class="stripe-rule"></div>
+
+  <div class="container">
+    <!-- Mission / Vision split -->
+    <div class="section">
+      <div class="about-split">
+        <div class="about-left">
+          <span class="section-label teal" style="color:var(--teal-lt)">Mission</span>
+          <h3 style="margin-bottom:16px;color:var(--offwhite)">Why We<br>Exist</h3>
+          <p style="color:rgba(242,237,224,0.75)">Replace this with your actual mission statement. Explain the problem you exist to solve and the people you exist to serve. One paragraph, direct and honest.</p>
+          <div style="margin-top:24px;display:flex;gap:24px">
+            <div><div class="stat-number" style="font-size:36px;color:var(--orange-lt)">2019</div><div class="stat-label" style="color:rgba(242,237,224,0.4)">Founded</div></div>
+            <div><div class="stat-number" style="font-size:36px;color:var(--teal-lt)">12</div><div class="stat-label" style="color:rgba(242,237,224,0.4)">Team</div></div>
+          </div>
+        </div>
+        <div class="about-right">
+          <span class="section-label">Values</span>
+          <h3 style="margin-bottom:20px">What We<br>Believe</h3>
+          <ul class="retro-list">
+            <li><strong>Value One.</strong> One sentence that defines what this value means in practice.</li>
+            <li><strong>Value Two.</strong> One sentence that defines what this value means in practice.</li>
+            <li><strong>Value Three.</strong> One sentence that defines what this value means in practice.</li>
+            <li><strong>Value Four.</strong> One sentence that defines what this value means in practice.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team -->
+    <div class="section">
+      <span class="section-label">The Team</span>
+      <h2 style="margin-bottom:32px">The People<br>Behind It</h2>
+      <div class="card-grid">
+        <div class="card no-accent" style="text-align:center">
+          <div style="width:64px;height:64px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:var(--font-display);font-weight:900;font-size:22px;color:var(--orange-lt)">JK</div>
+          <h4 style="margin-bottom:4px">Jane Kirk</h4>
+          <span class="section-label" style="text-align:center;margin-bottom:10px">Founder & CEO</span>
+          <p style="font-size:13px">One sentence bio that establishes credibility and hints at the person's superpower.</p>
+        </div>
+        <div class="card no-accent" style="text-align:center">
+          <div style="width:64px;height:64px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:var(--font-display);font-weight:900;font-size:22px;color:var(--offwhite)">MS</div>
+          <h4 style="margin-bottom:4px">Morgan Spock</h4>
+          <span class="section-label teal" style="text-align:center;margin-bottom:10px">Head of Product</span>
+          <p style="font-size:13px">One sentence bio that establishes credibility and hints at the person's superpower.</p>
+        </div>
+        <div class="card no-accent" style="text-align:center">
+          <div style="width:64px;height:64px;border-radius:50%;background:var(--rust);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:var(--font-display);font-weight:900;font-size:22px;color:var(--offwhite)">BD</div>
+          <h4 style="margin-bottom:4px">Bones Daystrom</h4>
+          <span class="section-label" style="color:var(--rust);text-align:center;margin-bottom:10px">Lead Engineer</span>
+          <p style="font-size:13px">One sentence bio that establishes credibility and hints at the person's superpower.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Press / Logos placeholder -->
+    <div class="section" style="text-align:center">
+      <span class="section-label" style="text-align:center">As Seen In</span>
+      <div style="display:flex;align-items:center;justify-content:center;gap:40px;margin-top:24px;flex-wrap:wrap;opacity:0.3">
+        <span style="font-family:var(--font-display);font-weight:900;font-size:24px;text-transform:uppercase;letter-spacing:0.05em">Publication</span>
+        <span style="font-family:var(--font-display);font-weight:900;font-size:24px;text-transform:uppercase;letter-spacing:0.05em">Media Co</span>
+        <span style="font-family:var(--font-display);font-weight:900;font-size:24px;text-transform:uppercase;letter-spacing:0.05em">The Review</span>
+        <span style="font-family:var(--font-display);font-weight:900;font-size:24px;text-transform:uppercase;letter-spacing:0.05em">Outlet</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stripe-rule"></div>
+  <footer>
+    <div class="container">
+      <div class="footer-logo">Space<span>Age</span></div>
+      <p style="margin-top:8px">Your one-line brand promise or tagline.</p>
+      <div class="footer-bottom" style="margin-top:32px"><span>© 2026 SpaceAge.</span></div>
+    </div>
+  </footer>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     TEMPLATE 3 — CONTACT PAGE
+════════════════════════════════════════ -->
+<div class="template-page" id="t3">
+
+  <nav class="retro-nav">
+    <a href="#" class="nav-logo">Space<span>Age</span></a>
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#" class="active">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="stripe-rule thick"></div>
+
+  <div style="padding:72px 24px 0;max-width:960px;margin:0 auto">
+    <span class="eyebrow">Hailing Frequencies Open</span>
+    <h1>Get In<br>Touch</h1>
+  </div>
+
+  <div class="stripe-rule thin" style="margin-top:40px"></div>
+
+  <div class="container">
+    <div class="section contact-split">
+      <!-- Info side -->
+      <div>
+        <span class="section-label">What to expect</span>
+        <p style="margin-top:8px">We respond to every message within one business day. For urgent matters use the direct channel below.</p>
+
+        <div class="alert alert-info" style="margin-top:24px">
+          <strong>Response Time</strong>
+          Typical reply within 4–8 hours during business days.
+        </div>
+
+        <div style="margin-top:28px;display:flex;flex-direction:column;gap:16px">
+          <div class="card no-accent" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(224,104,32,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">✉</div>
+            <div>
+              <div class="stat-label" style="margin-bottom:2px">Email</div>
+              <a href="mailto:hello@example.com" style="font-size:15px;font-weight:500">hello@example.com</a>
+            </div>
+          </div>
+          <div class="card no-accent" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(46,127,163,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">☎</div>
+            <div>
+              <div class="stat-label" style="margin-bottom:2px">Phone</div>
+              <a href="tel:+15551234567" style="font-size:15px;font-weight:500">+1 (555) 123-4567</a>
+            </div>
+          </div>
+          <div class="card no-accent" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(139,58,28,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">⌖</div>
+            <div>
+              <div class="stat-label" style="margin-bottom:2px">Location</div>
+              <span style="font-size:15px;font-weight:500">City, State · Remote-first</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form side -->
+      <div class="card" style="padding:32px">
+        <span class="section-label" style="margin-bottom:20px">Send a message</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" placeholder="James">
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" placeholder="Kirk">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" placeholder="captain@enterprise.fed">
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select>
+            <option>General Inquiry</option>
+            <option>Support Request</option>
+            <option>Partnership</option>
+            <option>Press</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea placeholder="There are certain things one must say to remain human..."></textarea>
+        </div>
+        <button class="btn btn-primary btn-full" style="margin-top:8px">Transmit Message</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stripe-rule"></div>
+  <footer>
+    <div class="container">
+      <div class="footer-logo">Space<span>Age</span></div>
+      <div class="footer-bottom" style="margin-top:16px"><span>© 2026 SpaceAge.</span></div>
+    </div>
+  </footer>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     TEMPLATE 4 — PRICING PAGE
+════════════════════════════════════════ -->
+<div class="template-page" id="t4">
+
+  <nav class="retro-nav">
+    <a href="#" class="nav-logo">Space<span>Age</span></a>
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#" class="active">Pricing</a></li>
+      <li><a href="#">Contact</a></li>
+      <li><a href="#" class="nav-cta">Start Free</a></li>
+    </ul>
+  </nav>
+  <div class="stripe-rule thick"></div>
+
+  <div style="padding:72px 24px 56px;text-align:center;max-width:960px;margin:0 auto;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-80px;right:-80px;width:300px;height:300px;border-radius:50%;box-shadow:0 0 0 16px var(--orange-lt),0 0 0 32px var(--orange),0 0 0 48px var(--teal-lt),0 0 0 64px var(--teal);opacity:0.6;pointer-events:none"></div>
+    <span class="eyebrow" style="text-align:center">Simple Pricing</span>
+    <h1>Choose Your<br>Starship</h1>
+    <p class="lead" style="max-width:480px;margin:16px auto 0">No hidden fees. No long-term contracts. Upgrade, downgrade, or cancel any time.</p>
+  </div>
+
+  <div class="stripe-rule"></div>
+
+  <div class="container">
+    <div class="section">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start">
+
+        <!-- Free -->
+        <div class="pricing-card">
+          <span class="section-label" style="text-align:center">Free</span>
+          <div class="pricing-price"><sup>$</sup>0</div>
+          <span class="pricing-period">forever</span>
+          <ul class="pricing-features">
+            <li>Feature one included</li>
+            <li>Feature two included</li>
+            <li>5 uses per month</li>
+            <li>Community support</li>
+          </ul>
+          <a href="#" class="btn btn-secondary btn-full" style="margin-top:8px">Get Started Free</a>
+        </div>
+
+        <!-- Pro — featured -->
+        <div class="pricing-card featured" style="transform:translateY(-8px)">
+          <div style="text-align:center;margin-bottom:12px"><span class="badge badge-teal">Most Popular</span></div>
+          <span class="section-label teal" style="text-align:center">Pro</span>
+          <div class="pricing-price" style="color:var(--teal)"><sup>$</sup>29</div>
+          <span class="pricing-period">per month</span>
+          <ul class="pricing-features">
+            <li>Everything in Free</li>
+            <li>Unlimited uses</li>
+            <li>Priority processing</li>
+            <li>Email support</li>
+            <li>API access</li>
+          </ul>
+          <a href="#" class="btn btn-teal btn-full" style="margin-top:8px">Start Pro Trial</a>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="pricing-card">
+          <span class="section-label" style="color:var(--rust);text-align:center">Enterprise</span>
+          <div class="pricing-price">Custom</div>
+          <span class="pricing-period">talk to us</span>
+          <ul class="pricing-features">
+            <li>Everything in Pro</li>
+            <li>Custom integrations</li>
+            <li>SLA guarantee</li>
+            <li>Dedicated support</li>
+            <li>On-prem option</li>
+          </ul>
+          <a href="#" class="btn btn-ghost btn-full" style="margin-top:8px">Contact Sales</a>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="retro-divider"><span>Common Questions</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+        <div class="card no-accent">
+          <h5 style="margin-bottom:8px;font-family:var(--font-display);font-size:15px">Can I change plans later?</h5>
+          <p style="font-size:14px">Yes. Upgrade or downgrade any time. Changes take effect on your next billing cycle with prorated adjustments.</p>
+        </div>
+        <div class="card no-accent">
+          <h5 style="margin-bottom:8px;font-family:var(--font-display);font-size:15px">Is there a free trial?</h5>
+          <p style="font-size:14px">Pro includes a 14-day free trial, no credit card required. You'll be notified before any charge.</p>
+        </div>
+        <div class="card no-accent">
+          <h5 style="margin-bottom:8px;font-family:var(--font-display);font-size:15px">What payment methods?</h5>
+          <p style="font-size:14px">We accept all major credit cards via Stripe. Annual plans receive a 20% discount automatically.</p>
+        </div>
+        <div class="card no-accent">
+          <h5 style="margin-bottom:8px;font-family:var(--font-display);font-size:15px">What is your refund policy?</h5>
+          <p style="font-size:14px">We offer a 30-day money-back guarantee on all paid plans. No questions asked.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stripe-rule"></div>
+  <footer>
+    <div class="container">
+      <div class="footer-logo">Space<span>Age</span></div>
+      <div class="footer-bottom" style="margin-top:16px"><span>© 2026 SpaceAge.</span></div>
+    </div>
+  </footer>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     TEMPLATE 5 — BLOG / CONTENT PAGE
+════════════════════════════════════════ -->
+<div class="template-page" id="t5">
+
+  <nav class="retro-nav">
+    <a href="#" class="nav-logo">Space<span>Age</span></a>
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#" class="active">Blog</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#" class="nav-cta">Subscribe</a></li>
+    </ul>
+  </nav>
+  <div class="stripe-rule thick"></div>
+
+  <!-- Featured post hero -->
+  <div style="background:var(--navy);padding:72px 24px 56px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-80px;right:-80px;width:340px;height:340px;border-radius:50%;box-shadow:0 0 0 20px rgba(244,161,53,0.2),0 0 0 40px rgba(224,104,32,0.15),0 0 0 60px rgba(91,175,203,0.1),0 0 0 80px rgba(46,127,163,0.08);pointer-events:none"></div>
+    <div style="max-width:960px;margin:0 auto;position:relative;z-index:1">
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+        <span class="badge badge-orange">Featured</span>
+        <span class="badge badge-teal">Category</span>
+      </div>
+      <h1 style="color:var(--offwhite);max-width:640px;margin-bottom:20px">Your Featured<br>Article Title<br>Goes Here</h1>
+      <p style="color:rgba(242,237,224,0.65);max-width:520px;font-size:16px;line-height:1.7;margin-bottom:24px">The opening sentence or subheading that hooks the reader and tells them exactly what they're about to learn or experience from reading this piece.</p>
+      <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:900;font-size:14px;color:var(--offwhite)">JK</div>
+          <span style="font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(242,237,224,0.5)">Jane Kirk · June 7, 2026 · 8 min read</span>
+        </div>
+        <a href="#" class="btn btn-ghost-teal btn-sm">Read Article →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="stripe-rule"></div>
+
+  <div class="container">
+    <div class="section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px">
+        <div>
+          <span class="section-label">Latest Posts</span>
+          <h2>Recent<br>Articles</h2>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span class="tag tag-orange" style="cursor:pointer">All</span>
+          <span class="tag tag-navy" style="cursor:pointer">Tutorials</span>
+          <span class="tag tag-navy" style="cursor:pointer">Case Studies</span>
+          <span class="tag tag-navy" style="cursor:pointer">News</span>
+        </div>
+      </div>
+
+      <div class="card-grid">
+        <div class="post-card">
+          <div class="post-card-img"><div class="post-swoosh"></div><span>01</span></div>
+          <div class="post-card-body">
+            <div class="post-meta">Tutorial · June 5, 2026</div>
+            <h4>Article Title One: A Working Headline That Promises Value</h4>
+            <p>Opening sentence that teases the key insight without giving it all away. Enough to earn the click.</p>
+            <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between">
+              <span class="tag tag-orange">Tutorial</span>
+              <a href="#" style="font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase">Read →</a>
+            </div>
+          </div>
+        </div>
+        <div class="post-card">
+          <div class="post-card-img" style="background:linear-gradient(135deg,#0f2a1e 0%,#1a3d2c 100%)"><div class="post-swoosh" style="box-shadow:0 0 0 12px rgba(91,175,203,0.3),0 0 0 24px rgba(46,127,163,0.2),0 0 0 36px rgba(46,127,163,0.1)"></div><span>02</span></div>
+          <div class="post-card-body">
+            <div class="post-meta">Case Study · June 2, 2026</div>
+            <h4>Article Title Two: Results-Focused Headline With a Number</h4>
+            <p>Opening sentence that teases the key insight without giving it all away. Enough to earn the click.</p>
+            <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between">
+              <span class="tag tag-teal">Case Study</span>
+              <a href="#" style="font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase">Read →</a>
+            </div>
+          </div>
+        </div>
+        <div class="post-card">
+          <div class="post-card-img" style="background:linear-gradient(135deg,#2a1010 0%,#3d1a1a 100%)"><div class="post-swoosh" style="box-shadow:0 0 0 12px rgba(244,161,53,0.3),0 0 0 24px rgba(139,58,28,0.2),0 0 0 36px rgba(139,58,28,0.1)"></div><span>03</span></div>
+          <div class="post-card-body">
+            <div class="post-meta">News · May 29, 2026</div>
+            <h4>Article Title Three: Newsy Headline That Creates Urgency</h4>
+            <p>Opening sentence that teases the key insight without giving it all away. Enough to earn the click.</p>
+            <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between">
+              <span class="tag tag-navy">News</span>
+              <a href="#" style="font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase">Read →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Newsletter CTA -->
+      <div class="retro-divider"><span>Stay in the loop</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center">
+        <div>
+          <span class="section-label">Newsletter</span>
+          <h3 style="margin-bottom:12px">Get the Dispatch</h3>
+          <p>One paragraph pitch for your newsletter. What does a subscriber get, how often, and why is it worth their inbox slot?</p>
+        </div>
+        <div class="card" style="padding:28px">
+          <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" placeholder="First name">
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" placeholder="you@example.com">
+          </div>
+          <button class="btn btn-primary btn-full">Subscribe Free</button>
+          <p style="font-size:12px;text-align:center;margin-top:10px;opacity:0.45">No spam. Unsubscribe any time.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stripe-rule"></div>
+  <footer>
+    <div class="container">
+      <div class="footer-logo">Space<span>Age</span></div>
+      <p style="margin-top:8px">Your one-line brand promise or tagline.</p>
+      <div class="footer-bottom" style="margin-top:32px"><span>© 2026 SpaceAge.</span><span>Built with Space Age CSS.</span></div>
+    </div>
+  </footer>
+</div>
+
+
+<script>
+function showTemplate(id) {
+  document.querySelectorAll('.template-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tpl-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelector('[onclick="showTemplate(\'' + id + '\')"]').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

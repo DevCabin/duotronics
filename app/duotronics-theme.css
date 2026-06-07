@@ -1,0 +1,481 @@
+/* =====================================================
+   DUOTRONICS — THEME OVERRIDE
+   Extends space-age-general.css
+   Load AFTER space-age-general.css
+
+   USAGE:
+   <link rel="stylesheet" href="space-age-general.css">
+   <link rel="stylesheet" href="duotronics-theme.css">
+
+   CONCEPT:
+   Left hemisphere  = Analytical  = Orange ramp  (--left-*)
+   Right hemisphere = Creative    = Teal ramp    (--right-*)
+   The two halves of the Duotronics dual-model pipeline
+   are color-coded throughout every UI surface.
+===================================================== */
+
+
+/* ─────────────────────────────────────────────────
+   DUOTRONICS VARIABLES
+   Extends / overrides :root from general sheet
+───────────────────────────────────────────────── */
+:root {
+  /* Hemisphere identity colors */
+  --left:       #E06820;   /* Analytical  — burnt orange  */
+  --left-lt:    #F4A135;   /* Light orange                */
+  --left-dim:   rgba(224, 104, 32, 0.12);
+  --left-glow:  rgba(224, 104, 32, 0.22);
+
+  --right:      #2E7FA3;   /* Creative    — steel teal    */
+  --right-lt:   #5BAFCB;   /* Light teal                  */
+  --right-dim:  rgba(46, 127, 163, 0.12);
+  --right-glow: rgba(46, 127, 163, 0.22);
+
+  /* Synthesis — where both models merge */
+  --synthesis:  #6B5C8F;   /* Deep violet / purple        */
+  --synthesis-lt: #9E8EC2;
+  --synthesis-dim: rgba(107, 92, 143, 0.12);
+
+  /* Duotronics brand name font sizing */
+  --logo-size:  26px;
+}
+
+
+/* ─────────────────────────────────────────────────
+   DUOTRONICS NAV
+───────────────────────────────────────────────── */
+nav.retro-nav .nav-logo .left  { color: var(--left-lt); }
+nav.retro-nav .nav-logo .right { color: var(--right-lt); }
+
+/* Split stripe — left = orange, right = teal */
+nav.retro-nav::before {
+  background: linear-gradient(90deg,
+    var(--left)    0%,
+    var(--left-lt) 25%,
+    var(--right-lt) 75%,
+    var(--right)   100%
+  );
+}
+
+
+/* ─────────────────────────────────────────────────
+   HEMISPHERE PANEL LAYOUT
+   The core two-column layout for the dual pipeline
+───────────────────────────────────────────────── */
+.duo-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid rgba(26,43,60,0.1);
+}
+
+.duo-panel {
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  background: var(--offwhite);
+}
+
+/* Left panel — Analytical / Orange */
+.duo-panel.left-panel {
+  border-right: 1px solid rgba(26,43,60,0.08);
+}
+.duo-panel.left-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--left);
+}
+.duo-panel.left-panel .panel-label { color: var(--left); }
+.duo-panel.left-panel .panel-icon  { color: var(--left); }
+
+/* Right panel — Creative / Teal */
+.duo-panel.right-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--right);
+}
+.duo-panel.right-panel .panel-label { color: var(--right); }
+.duo-panel.right-panel .panel-icon  { color: var(--right); }
+
+/* Panel label — sits above panel heading */
+.panel-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* Panel heading */
+.duo-panel h3,
+.duo-panel h4 { line-height: 1.1; margin-bottom: 12px; }
+
+/* Panel body text */
+.duo-panel p { font-size: 14px; line-height: 1.7; }
+
+/* Dark variant panels */
+.duo-panel.left-panel.dark {
+  background: var(--navy);
+  border-right-color: rgba(255,255,255,0.06);
+}
+.duo-panel.left-panel.dark::before { background: var(--left-lt); }
+.duo-panel.left-panel.dark h3,
+.duo-panel.left-panel.dark h4,
+.duo-panel.left-panel.dark p { color: var(--offwhite); }
+.duo-panel.left-panel.dark .panel-label { color: var(--left-lt); }
+
+.duo-panel.right-panel.dark { background: #0f1e2b; }
+.duo-panel.right-panel.dark::before { background: var(--right-lt); }
+.duo-panel.right-panel.dark h3,
+.duo-panel.right-panel.dark h4,
+.duo-panel.right-panel.dark p { color: var(--offwhite); }
+.duo-panel.right-panel.dark .panel-label { color: var(--right-lt); }
+
+@media (max-width: 640px) {
+  .duo-panels { grid-template-columns: 1fr; }
+  .duo-panel.left-panel { border-right: none; border-bottom: 1px solid rgba(26,43,60,0.08); }
+}
+
+
+/* ─────────────────────────────────────────────────
+   SYNTHESIS STRIP
+   The center point where left + right output merges
+───────────────────────────────────────────────── */
+.duo-synthesis {
+  background: var(--offwhite);
+  border: 1px solid rgba(107, 92, 143, 0.25);
+  border-top: 4px solid var(--synthesis);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  padding: 20px 28px;
+  position: relative;
+}
+.duo-synthesis .panel-label { color: var(--synthesis); }
+
+/* Full pipeline layout — panels above + synthesis below */
+.duo-pipeline {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid rgba(26,43,60,0.1);
+}
+.duo-pipeline .duo-panels {
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid rgba(26,43,60,0.08);
+}
+.duo-pipeline .duo-synthesis {
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+
+/* ─────────────────────────────────────────────────
+   STREAMING / TYPING INDICATOR
+   Animated dots while a model is generating
+───────────────────────────────────────────────── */
+.duo-thinking {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 0;
+}
+.duo-thinking span {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  animation: duoPulse 1.2s ease-in-out infinite both;
+}
+.duo-thinking.left-thinking span  { background: var(--left); }
+.duo-thinking.right-thinking span { background: var(--right); }
+
+.duo-thinking span:nth-child(2) { animation-delay: 0.18s; }
+.duo-thinking span:nth-child(3) { animation-delay: 0.36s; }
+
+@keyframes duoPulse {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+  40%           { transform: scale(1.0); opacity: 1;   }
+}
+
+
+/* ─────────────────────────────────────────────────
+   MODEL RESPONSE CARDS
+   Individual output bubbles from Left / Right model
+───────────────────────────────────────────────── */
+.duo-response {
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.duo-response::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  border-radius: 2px 0 0 2px;
+}
+
+.duo-response.left-response {
+  background: var(--left-dim);
+  border: 1px solid rgba(224,104,32,0.2);
+}
+.duo-response.left-response::before { background: var(--left); }
+
+.duo-response.right-response {
+  background: var(--right-dim);
+  border: 1px solid rgba(46,127,163,0.2);
+}
+.duo-response.right-response::before { background: var(--right); }
+
+.duo-response.synthesis-response {
+  background: var(--synthesis-dim);
+  border: 1px solid rgba(107,92,143,0.25);
+}
+.duo-response.synthesis-response::before { background: var(--synthesis); }
+
+.response-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.response-model-name {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.left-response  .response-model-name { color: var(--left);       }
+.right-response .response-model-name { color: var(--right);      }
+.synthesis-response .response-model-name { color: var(--synthesis); }
+
+.response-body { font-size: 14px; line-height: 1.75; }
+
+
+/* ─────────────────────────────────────────────────
+   PROMPT INPUT BAR
+   The user's query input at the bottom of the UI
+───────────────────────────────────────────────── */
+.duo-prompt-bar {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  background: var(--offwhite);
+  border: 2px solid rgba(26,43,60,0.15);
+  border-radius: var(--radius-lg);
+  padding: 10px 10px 10px 16px;
+  transition: border-color 0.2s;
+}
+.duo-prompt-bar:focus-within {
+  border-color: var(--left);
+  box-shadow: 0 0 0 3px var(--left-glow);
+}
+.duo-prompt-bar textarea {
+  border: none;
+  background: transparent;
+  resize: none;
+  flex: 1;
+  font-size: 15px;
+  font-family: var(--font-body);
+  color: var(--navy);
+  outline: none;
+  min-height: 48px;
+  padding: 0;
+  width: auto;
+}
+.duo-prompt-bar .duo-send-btn {
+  background: var(--left);
+  border: none;
+  border-radius: var(--radius);
+  width: 40px; height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition);
+  color: var(--offwhite);
+  font-size: 18px;
+}
+.duo-prompt-bar .duo-send-btn:hover { background: var(--rust); }
+
+
+/* ─────────────────────────────────────────────────
+   MODEL SELECTOR TOGGLE
+   Switch between single / dual model mode
+───────────────────────────────────────────────── */
+.duo-mode-toggle {
+  display: inline-flex;
+  background: rgba(26,43,60,0.06);
+  border-radius: var(--radius);
+  padding: 3px;
+  gap: 2px;
+}
+.duo-mode-btn {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: transparent;
+  color: var(--navy);
+  opacity: 0.5;
+  transition: var(--transition);
+}
+.duo-mode-btn.active {
+  opacity: 1;
+  background: var(--offwhite);
+  box-shadow: 0 1px 4px rgba(26,43,60,0.12);
+  color: var(--navy);
+}
+.duo-mode-btn.active.left-mode  { color: var(--left);  }
+.duo-mode-btn.active.right-mode { color: var(--right); }
+.duo-mode-btn.active.duo-mode   { color: var(--synthesis); }
+
+
+/* ─────────────────────────────────────────────────
+   HEMISPHERE BADGE OVERRIDES
+   Replaces generic .badge colors for Duo context
+───────────────────────────────────────────────── */
+.badge-left       { background: var(--left);        color: var(--offwhite); }
+.badge-right      { background: var(--right);       color: var(--offwhite); }
+.badge-synthesis  { background: var(--synthesis);   color: var(--offwhite); }
+.tag-left         { color: var(--left); }
+.tag-right        { color: var(--right); }
+.tag-synthesis    { color: var(--synthesis); }
+
+
+/* ─────────────────────────────────────────────────
+   STAT OVERRIDES
+   Hemisphere-colored stat numbers
+───────────────────────────────────────────────── */
+.stat-number.left  { color: var(--left);  }
+.stat-number.right { color: var(--right); }
+.stat-number.synthesis { color: var(--synthesis); }
+
+
+/* ─────────────────────────────────────────────────
+   SPLIT STRIPE — Duotronics variant
+   Orange left half | teal right half
+───────────────────────────────────────────────── */
+.stripe-rule.duo {
+  background: linear-gradient(90deg,
+    var(--left)     0%,
+    var(--left-lt)  50%,
+    var(--right-lt) 50%,
+    var(--right)    100%
+  );
+}
+
+
+/* ─────────────────────────────────────────────────
+   SECTION LABEL OVERRIDES
+───────────────────────────────────────────────── */
+.section-label.left  { color: var(--left);       }
+.section-label.right { color: var(--right);      }
+.section-label.synthesis { color: var(--synthesis); }
+
+
+/* ─────────────────────────────────────────────────
+   HISTORY / CONVERSATION LIST
+   Sidebar list of past queries
+───────────────────────────────────────────────── */
+.duo-history-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid rgba(26,43,60,0.06);
+}
+.duo-history-item:hover { background: rgba(26,43,60,0.04); }
+.duo-history-item.active { background: rgba(224,104,32,0.08); }
+
+.duo-history-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.duo-history-dot.left-dot  { background: var(--left);  }
+.duo-history-dot.right-dot { background: var(--right); }
+.duo-history-dot.duo-dot   {
+  background: conic-gradient(var(--left) 50%, var(--right) 50%);
+}
+
+.duo-history-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--navy);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+.duo-history-meta {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--navy);
+  opacity: 0.35;
+  margin-top: 2px;
+}
+
+
+/* ─────────────────────────────────────────────────
+   DUOTRONICS HERO OVERRIDE
+   Splits the headline into left/right colored words
+───────────────────────────────────────────────── */
+.duo-hero-title .left-word  { color: var(--left);  }
+.duo-hero-title .right-word { color: var(--right); }
+
+/* Swoosh override — split colors */
+.hero.duo-hero::after {
+  box-shadow:
+    0 0 0 20px var(--left-lt),
+    0 0 0 40px var(--left),
+    0 0 0 60px var(--right-lt),
+    0 0 0 80px var(--right);
+}
+
+
+/* ─────────────────────────────────────────────────
+   COPY BUTTON
+   Appears on response cards
+───────────────────────────────────────────────── */
+.duo-copy-btn {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid rgba(26,43,60,0.15);
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  cursor: pointer;
+  color: var(--navy);
+  opacity: 0.45;
+  transition: var(--transition);
+  margin-left: auto;
+}
+.duo-copy-btn:hover { opacity: 1; border-color: var(--left); color: var(--left); }
+.duo-copy-btn.copied { opacity: 1; border-color: #2a7a4b; color: #2a7a4b; }

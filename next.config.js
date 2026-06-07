@@ -1,8 +1,3 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['js-yaml']
-  }
-}
-
+const nextConfig = {}
 module.exports = nextConfig

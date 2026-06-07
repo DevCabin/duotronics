@@ -1,0 +1,187 @@
+:root {
+  /* Bridge old --dt-* variables to new theme variables */
+  --dt-left: var(--left);
+  --dt-left-bg: var(--left-dim);
+  --dt-left-label: var(--left);
+  --dt-left-body: var(--navy);
+  --dt-left-border: var(--left);
+  --dt-right: var(--right);
+  --dt-right-bg: var(--right-dim);
+  --dt-right-text: var(--right);
+  --dt-right-border: var(--right);
+  --dt-accent: var(--synthesis);
+  --dt-accent-bg: var(--synthesis-dim);
+  --dt-accent-text: var(--synthesis);
+  --dt-star: #BA7517;
+  --dt-star-hover: #EF9F27;
+  
+  /* Legacy compatibility */
+  --left: #E06820;
+  --right: #2E7FA3;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--navy);
+  min-height: 100vh;
+  line-height: 1.6;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Grain overlay from space-age theme */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+.app-shell {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.logo {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.logo-mark {
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  color: #1a1a1a;
+}
+
+.logo-mark .left { color: var(--dt-left); }
+.logo-mark .right { color: var(--dt-right); }
+.logo-sub { font-size: 13px; color: #888; margin-top: 4px; }
+
+.card {
+  background: #fff;
+  border: 0.5px solid #e0e0d8;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+label {
+  font-size: 13px;
+  color: #555;
+  display: block;
+  margin-bottom: 6px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 0.5px solid #d0d0c8;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1a1a1a;
+  background: #fff;
+  margin-bottom: 1rem;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--dt-accent);
+  box-shadow: 0 0 0 3px rgba(83,74,183,0.08);
+}
+
+textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 1.25rem;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 0.5px solid #c8c8c0;
+  background: transparent;
+  color: #1a1a1a;
+  font-family: inherit;
+}
+
+.btn:hover { background: #f4f4f0; }
+.btn:active { transform: scale(0.98); }
+
+.btn-primary {
+  background: var(--dt-accent);
+  color: #fff;
+  border-color: var(--dt-accent);
+}
+
+.btn-primary:hover { opacity: 0.9; background: var(--dt-accent); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-row {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.hemi-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+}
+
+.hemi-label.left { background: var(--dt-left-bg); color: var(--dt-left-label); }
+.hemi-label.right { background: var(--dt-right-bg); color: var(--dt-right-text); }
+
+.error-note {
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #FCEBEB;
+  color: #A32D2D;
+  border: 0.5px solid #F09595;
+  margin-bottom: 1rem;
+}
+
+.success-note {
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--dt-right-bg);
+  color: var(--dt-right-text);
+  border: 0.5px solid var(--dt-right-border);
+  margin-bottom: 1rem;
+}
+
+.warning-note {
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #FAEEDA;
+  color: #633806;
+  border: 0.5px solid #FAC775;
+  margin-bottom: 1rem;
+}

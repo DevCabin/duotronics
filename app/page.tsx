@@ -158,11 +158,40 @@ export default function Home() {
         zIndex: 0
       }} />
       
-      <div className="logo" style={{ position: 'relative', zIndex: 1 }}>
-        <div className="logo-mark" style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 32, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--navy)' }}>
-          <span className="left" style={{ color: 'var(--left)' }}>◐</span> DUOTRONICS <span className="right" style={{ color: 'var(--right)' }}>◑</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', zIndex: 1, marginBottom: '2.5rem' }}>
+        <div className="logo">
+          <div className="logo-mark" style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 32, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--navy)' }}>
+            <span className="left" style={{ color: 'var(--left)' }}>◐</span> DUOTRONICS <span className="right" style={{ color: 'var(--right)' }}>◑</span>
+          </div>
+          <div className="logo-sub" style={{ fontFamily: 'var(--font-display)', fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--navy)', opacity: 0.5, marginTop: 8 }}>dual hemisphere AI processing</div>
         </div>
-        <div className="logo-sub" style={{ fontFamily: 'var(--font-display)', fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--navy)', opacity: 0.5, marginTop: 8 }}>dual hemisphere AI processing</div>
+        <a 
+          href="/about" 
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontWeight: 700,
+            fontSize: 12,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            color: 'var(--navy)',
+            opacity: 0.6,
+            textDecoration: 'none',
+            padding: '8px 16px',
+            border: '1.5px solid rgba(26,43,60,0.2)',
+            borderRadius: 'var(--radius)',
+            transition: 'all 0.15s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.opacity = '1'
+            e.currentTarget.style.borderColor = 'var(--orange)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = '0.6'
+            e.currentTarget.style.borderColor = 'rgba(26,43,60,0.2)'
+          }}
+        >
+          About
+        </a>
       </div>
 
       <div style={{ position: 'relative', zIndex: 1 }}>

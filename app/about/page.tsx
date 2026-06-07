@@ -544,7 +544,7 @@ export default function AboutPage() {
             fontSize: 12,
             color: 'rgba(242,237,224,0.28)'
           }}>
-            <span>© 2024 DevCabin Research</span>
+            <span>© {new Date().getFullYear()} DevCabin Research</span>
             <a href="https://github.com/DevCabin/duotronics" style={{ color: 'rgba(242,237,224,0.5)' }}>GitHub</a>
           </div>
         </div>

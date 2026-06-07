@@ -15,13 +15,6 @@ export default function Auth({ onAuth }: AuthProps) {
   const [message, setMessage] = useState('')
   const supabase = createClient()
 
-  const handleOAuth = async (provider: 'google' | 'github') => {
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: { redirectTo: `${window.location.origin}/auth/callback` }
-    })
-  }
-
   const handleEmail = async () => {
     setError(''); setLoading(true)
     try {
@@ -78,49 +71,6 @@ export default function Auth({ onAuth }: AuthProps) {
       }}>
         Sign in to get started. Your API keys and preferences are saved securely.
       </p>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '1.5rem' }}>
-        <button onClick={() => handleOAuth('google')} style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          padding: '12px', 
-          border: '2px solid rgba(26,43,60,0.18)', 
-          borderRadius: 'var(--radius)',
-          cursor: 'pointer', 
-          fontSize: 13, 
-          background: 'var(--offwhite)', 
-          fontFamily: 'var(--font-display)',
-          fontWeight: 700,
-          textTransform: 'uppercase',
-          letterSpacing: '0.1em',
-          color: 'var(--navy)',
-          transition: 'all 0.15s',
-        }}>
-          G Google
-        </button>
-        <button onClick={() => handleOAuth('github')} style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          padding: '12px', 
-          border: '2px solid rgba(26,43,60,0.18)', 
-          borderRadius: 'var(--radius)',
-          cursor: 'pointer', 
-          fontSize: 13, 
-          background: 'var(--offwhite)', 
-          fontFamily: 'var(--font-display)',
-          fontWeight: 700,
-          textTransform: 'uppercase',
-          letterSpacing: '0.1em',
-          color: 'var(--navy)',
-          transition: 'all 0.15s',
-        }}>
-          ⌥ GitHub
-        </button>
-      </div>
-
-      <div className="retro-divider" style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '1.5rem 0' }}>
-        <div style={{ flex: 1, height: 1, background: 'rgba(26,43,60,0.14)' }} />
-        <span style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--tan)' }}>Or</span>
-        <div style={{ flex: 1, height: 1, background: 'rgba(26,43,60,0.14)' }} />
-      </div>
 
       <label style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--navy)', marginBottom: 6, display: 'block' }}>Email</label>
       <input 

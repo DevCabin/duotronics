@@ -53,3 +53,8 @@ ENCRYPTION_SECRET=                  # Generate: openssl rand -base64 32
 
 - [CHANGELOG.md](./CHANGELOG.md) — Detailed version history
 - [DEVELOPER.md](./DEVELOPER.md) — Architecture + onboarding guide
+
+## IYKYK
+
+- Let's make Dr Daystrom proud
+- Maybe we'll win the Zee-Magnees prize

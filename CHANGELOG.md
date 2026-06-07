@@ -4,6 +4,20 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
 
 ## [Unreleased]
 
+## [0.3.1] - 2025-06-07
+
+### Added
+- Progressive rate limiting on authentication
+  - 3 attempts → 5 min lockout
+  - 3 more → 10 min lockout
+  - 3 more → 30 min lockout
+  - 4th lockout shows "peer review" contact message with email link
+- Auth callback handler (`/auth/callback`) for email verification redirects
+- Dynamic email redirect URL based on `window.location.origin`
+
+### Fixed
+- Email verification links now redirect to production URL instead of localhost
+
 ## [0.3.0] - 2025-06-07
 
 ### Added

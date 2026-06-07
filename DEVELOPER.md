@@ -174,6 +174,28 @@ How it works:
 
 **Styles not applying?** Check CSS load order in `layout.tsx` (general → theme → globals).
 
+## Security
+
+### Rate Limiting
+Authentication has progressive rate limiting to prevent brute force attacks:
+
+| Attempts | Lockout Duration |
+|----------|------------------|
+| 3 failed | 5 minutes |
+| 6 failed | 10 minutes |
+| 9 failed | 30 minutes |
+| 12 failed | Permanent (with contact link) |
+
+The lockout is per-email address. After the final lockout, users see a message offering peer review participation with a contact link.
+
+Implementation: `app/lib/rate-limit.ts` (in-memory, resets on server restart)
+
+### API Key Security
+- All LLM API keys are encrypted with AES-256-GCM
+- Encryption happens server-side only
+- Keys are never exposed to the client
+- Users bring their own keys—you're not paying for their usage
+
 ## Troubleshooting
 
 ### Vercel Deployment Issues

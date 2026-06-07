@@ -2,6 +2,8 @@
 
 Dual hemisphere AI processing — an experiment in model synthesis.
 
+_A research project by [DevCabin](https://github.com/DevCabin)_
+
 ## Quick Start
 
 ```bash

@@ -174,6 +174,36 @@ How it works:
 
 **Styles not applying?** Check CSS load order in `layout.tsx` (general → theme → globals).
 
+## Troubleshooting
+
+### Vercel Deployment Issues
+
+**Build fails with "Command not found"**
+- Ensure `package.json` scripts are correct
+- Run `npm ci` locally to verify lockfile
+
+**API routes return 500**
+- Check Vercel Functions logs for errors
+- Verify all environment variables are set in Vercel dashboard
+- Ensure `ENCRYPTION_SECRET` is base64-encoded (32 bytes)
+
+**CORS errors in browser**
+- Vercel handles CORS automatically for same-origin requests
+- Check that `NEXT_PUBLIC_SUPABASE_URL` matches your Supabase project
+
+**Styles not loading**
+- Confirm CSS files are in `app/` directory (Next.js 14 App Router requirement)
+- Check that `layout.tsx` imports CSS in correct order
+
+### Debug Mode
+
+Enable verbose logging in API routes by adding to `.env.local`:
+```bash
+DEBUG=1
+```
+
+Then check Vercel Functions logs for detailed output.
+
 ## Questions?
 
 - Architecture → this doc

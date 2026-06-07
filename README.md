@@ -54,6 +54,25 @@ ENCRYPTION_SECRET=                  # Generate: openssl rand -base64 32
 - [CHANGELOG.md](./CHANGELOG.md) — Detailed version history
 - [DEVELOPER.md](./DEVELOPER.md) — Architecture + onboarding guide
 
+## Deployment
+
+### Vercel
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Link and deploy
+vercel link
+vercel --prod
+```
+
+**Required Environment Variables on Vercel:**
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `ENCRYPTION_SECRET`
+
 ## IYKYK
 
 - Let's make Dr Daystrom proud

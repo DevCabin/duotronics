@@ -4,6 +4,8 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
 
 ## [Unreleased]
 
+## [0.3.0] - 2025-06-07
+
 ### Added
 - Space Age '70s theme implementation
   - Cream background (#F2EDE0) with grain texture overlay
@@ -15,6 +17,7 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
   - Skip auth button appears only in development
   - In-memory config store (no Supabase required for local testing)
   - `x-dev-bypass` header for API routes
+- Vercel deployment documentation in README
 
 ### Changed
 - Migrated from Tailwind to custom CSS architecture
@@ -23,7 +26,7 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
   - `globals.css` — app utilities + variable bridging
 - Provider color scheme: orange (left/analytical), teal (right/creative), violet (synthesis)
 
-## [0.2.0] - 2024-06-07
+## [0.2.0] - 2025-06-06
 
 ### Added
 - Pipeline retry logic with triage protocol

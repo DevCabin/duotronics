@@ -220,7 +220,7 @@ export default function Home() {
         }}>
           A Research Project By{' '}
           <a 
-            href="https://github.com/DevCabin"
+            href="https://devcabin.com"
             target="_blank"
             rel="noopener noreferrer"
             style={{

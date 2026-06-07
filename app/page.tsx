@@ -194,15 +194,14 @@ export default function Home() {
         </a>
       </div>
 
-      {/* Star field footer row */}
+      {/* Star field footer row - moved above context banner */}
       <div style={{
         background: '#0a0a0a',
-        height: 28,
+        height: 44,
         position: 'relative',
         zIndex: 1,
-        marginBottom: 12,
-        backgroundImage: 'radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.15), transparent), radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.1), transparent), radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.2), transparent), radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.15), transparent), radial-gradient(1px 1px at 160px 20px, rgba(255,255,255,0.1), transparent)',
-        backgroundSize: '200px 100px',
+        backgroundImage: 'radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.3), transparent), radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.25), transparent), radial-gradient(2px 2px at 90px 40px, rgba(255,255,255,0.35), transparent), radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.3), transparent), radial-gradient(1px 1px at 160px 20px, rgba(255,255,255,0.25), transparent), radial-gradient(2px 2px at 50px 90px, rgba(255,255,255,0.2), transparent)',
+        backgroundSize: '180px 100px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-end',
@@ -211,15 +210,18 @@ export default function Home() {
       }}>
         <span style={{
           fontFamily: 'var(--font-display)',
-          fontSize: 9,
+          fontSize: 10,
           fontWeight: 700,
-          letterSpacing: '0.35em',
+          letterSpacing: '0.3em',
           textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.6)'
+          color: 'rgba(255,255,255,0.8)'
         }}>
           A Research Project By DevCabin
         </span>
       </div>
+
+      {/* Gap */}
+      <div style={{ height: 20 }} />
 
       {/* Context banner */}
       <div style={{

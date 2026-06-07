@@ -2,7 +2,7 @@
 
 Dual hemisphere AI processing — an experiment in model synthesis.
 
-_A research project by [DevCabin](https://duotronics.vercel.app)_
+_A research project by [DevCabin](https://devcabin.com)_
 
 ## Quick Start
 

@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/app/lib/supabase'
 
 interface AuthProps {
@@ -13,10 +13,40 @@ export default function Auth({ onAuth }: AuthProps) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [rateLimitInfo, setRateLimitInfo] = useState<{ message: string; contactLink?: boolean } | null>(null)
+  const [attemptCount, setAttemptCount] = useState(0)
   const supabase = createClient()
+
+  // Check rate limit on mount and when email changes
+  useEffect(() => {
+    if (!email) return
+    checkRateLimit()
+  }, [email])
+
+  const checkRateLimit = async () => {
+    try {
+      const res = await fetch(`/api/rate-limit?email=${encodeURIComponent(email)}`)
+      const data = await res.json()
+      if (!data.allowed) {
+        setRateLimitInfo({ message: data.message, contactLink: data.contactLink })
+      } else {
+        setRateLimitInfo(null)
+      }
+    } catch {}
+  }
 
   const handleEmail = async () => {
     setError(''); setLoading(true)
+    
+    // Check rate limit first
+    const checkRes = await fetch(`/api/rate-limit?email=${encodeURIComponent(email)}`)
+    const checkData = await checkRes.json()
+    if (!checkData.allowed) {
+      setRateLimitInfo({ message: checkData.message, contactLink: checkData.contactLink })
+      setLoading(false)
+      return
+    }
+    
     try {
       if (mode === 'signup') {
         const redirectTo = typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined
@@ -25,11 +55,33 @@ export default function Auth({ onAuth }: AuthProps) {
           password,
           options: { emailRedirectTo: redirectTo }
         })
-        if (error) { setError(error.message); return }
+        if (error) { 
+          // Record failed attempt
+          await fetch('/api/rate-limit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+          })
+          setAttemptCount(c => c + 1)
+          setError(error.message)
+          await checkRateLimit()
+          return 
+        }
         setMessage('Check your email to confirm your account.')
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
-        if (error) { setError(error.message); return }
+        if (error) { 
+          // Record failed attempt
+          await fetch('/api/rate-limit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+          })
+          setAttemptCount(c => c + 1)
+          setError(error.message)
+          await checkRateLimit()
+          return 
+        }
         onAuth()
       }
     } finally {
@@ -121,6 +173,22 @@ export default function Auth({ onAuth }: AuthProps) {
 
       {error && <div className="error-note" style={{ borderLeft: '5px solid var(--rust)', background: 'rgba(139,58,28,0.08)', borderRadius: '0 var(--radius) var(--radius) 0' }}>{error}</div>}
       {message && <div className="success-note">{message}</div>}
+      {rateLimitInfo && (
+        <div style={{ 
+          borderLeft: '5px solid var(--orange)', 
+          background: 'rgba(199,108,36,0.08)', 
+          borderRadius: '0 var(--radius) var(--radius) 0',
+          padding: '12px 16px',
+          marginBottom: 16,
+          fontSize: 14,
+          color: 'var(--navy)'
+        }}>
+          {rateLimitInfo.message}
+          {rateLimitInfo.contactLink && (
+            <>{' '}<a href="mailto:george@devcabin.com" style={{ color: 'var(--teal)', textDecoration: 'underline' }}>george@devcabin.com</a></>
+          )}
+        </div>
+      )}
 
       <div className="btn-row" style={{ justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem' }}>
         <button onClick={() => setMode(m => m === 'signin' ? 'signup' : 'signin')}

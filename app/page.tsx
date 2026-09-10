@@ -41,15 +41,26 @@ export default function Home() {
 
   useEffect(() => {
     const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session && !isDevBypass) { setScreen('auth'); return }
+      try {
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+        if (sessionError) {
+          console.error('[init] getSession failed:', sessionError.message)
+          setScreen('auth')
+          return
+        }
+        if (!session && !isDevBypass) { setScreen('auth'); return }
 
-      // Check if wizard is complete
-      const res = await fetch('/api/session', {
-        headers: isDevBypass ? { 'x-dev-bypass': 'true' } : {}
-      })
-      const data = await res.json()
-      setScreen(data.config ? 'intake' : 'wizard')
+        // Check if wizard is complete
+        const res = await fetch('/api/session', {
+          headers: isDevBypass ? { 'x-dev-bypass': 'true' } : {}
+        })
+        if (!res.ok) { setScreen('auth'); return }
+        const data = await res.json()
+        setScreen(data.config ? 'intake' : 'wizard')
+      } catch (err) {
+        console.error('[init] failed:', err)
+        setScreen('auth')
+      }
     }
     init()
 
@@ -60,11 +71,17 @@ export default function Home() {
   }, [isDevBypass])
 
   const handleAuth = async () => {
-    const res = await fetch('/api/session', {
-      headers: isDevBypass ? { 'x-dev-bypass': 'true' } : {}
-    })
-    const data = await res.json()
-    setScreen(data.config ? 'intake' : 'wizard')
+    try {
+      const res = await fetch('/api/session', {
+        headers: isDevBypass ? { 'x-dev-bypass': 'true' } : {}
+      })
+      if (!res.ok) { setScreen('wizard'); return }
+      const data = await res.json()
+      setScreen(data.config ? 'intake' : 'wizard')
+    } catch (err) {
+      console.error('[handleAuth] failed:', err)
+      setScreen('wizard')
+    }
   }
 
   const updateStage = (id: StageId, status: 'active' | 'done') => {

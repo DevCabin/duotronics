@@ -36,54 +36,70 @@ export default function Auth({ onAuth }: AuthProps) {
   }
 
   const handleEmail = async () => {
-    setError(''); setLoading(true)
-    
-    // Check rate limit first
-    const checkRes = await fetch(`/api/rate-limit?email=${encodeURIComponent(email)}`)
-    const checkData = await checkRes.json()
-    if (!checkData.allowed) {
-      setRateLimitInfo({ message: checkData.message, contactLink: checkData.contactLink })
-      setLoading(false)
-      return
-    }
-    
+    setError(''); setMessage(''); setLoading(true)
+
     try {
+      // Check rate limit first (network failure should not block auth)
+      try {
+        const checkRes = await fetch(`/api/rate-limit?email=${encodeURIComponent(email)}`)
+        if (checkRes.ok) {
+          const checkData = await checkRes.json()
+          if (!checkData.allowed) {
+            setRateLimitInfo({ message: checkData.message, contactLink: checkData.contactLink })
+            return
+          }
+        }
+      } catch {
+        // Rate-limit service unavailable — continue to auth attempt
+      }
+
       if (mode === 'signup') {
         const redirectTo = typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined
-        const { error } = await supabase.auth.signUp({ 
-          email, 
+        const { error } = await supabase.auth.signUp({
+          email,
           password,
           options: { emailRedirectTo: redirectTo }
         })
-        if (error) { 
-          // Record failed attempt
-          await fetch('/api/rate-limit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
-          })
+        if (error) {
+          // Record failed attempt (best-effort)
+          try {
+            await fetch('/api/rate-limit', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email })
+            })
+          } catch {}
           setAttemptCount(c => c + 1)
           setError(error.message)
           await checkRateLimit()
-          return 
+          return
         }
         setMessage('Check your email to confirm your account.')
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
-        if (error) { 
-          // Record failed attempt
-          await fetch('/api/rate-limit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
-          })
+        if (error) {
+          // Record failed attempt (best-effort)
+          try {
+            await fetch('/api/rate-limit', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email })
+            })
+          } catch {}
           setAttemptCount(c => c + 1)
           setError(error.message)
           await checkRateLimit()
-          return 
+          return
         }
         onAuth()
       }
+    } catch (err: any) {
+      const raw = err?.message ?? 'Network error'
+      setError(
+        raw === 'Failed to fetch' || raw === 'Load failed'
+          ? 'Cannot reach the auth server. Check your connection and that Supabase is configured on Vercel Production (NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY), then redeploy.'
+          : raw
+      )
     } finally {
       setLoading(false)
     }

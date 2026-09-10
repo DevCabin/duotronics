@@ -48,6 +48,27 @@ export default function Auth({ onAuth }: AuthProps) {
     }
   }
 
+  const handleDemo = async () => {
+    setError(""); setMessage(""); setLoading(true)
+    try {
+      const { error } = await supabase.auth.signInAnonymously()
+      if (error) {
+        const msg = error.message
+        if (msg.toLowerCase().includes("anonymous")) {
+          setError("Dummy sign-in is not enabled yet. In Supabase Dashboard: Auth -> Providers -> Anonymous sign-ins -> turn ON, Save.")
+        } else {
+          setError(friendlyAuthError(msg))
+        }
+        return
+      }
+      onAuth()
+    } catch (e: any) {
+      setError(friendlyAuthError(e?.message ?? "Failed to fetch"))
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const checkRateLimit = async () => {
     try {
       const res = await fetch(`/api/rate-limit?email=${encodeURIComponent(email)}`)
@@ -271,32 +292,28 @@ export default function Auth({ onAuth }: AuthProps) {
         </button>
       </div>
 
-      {process.env.NODE_ENV === 'development' && (
-        <>
-          <div className="retro-divider" style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '1.5rem 0' }}>
-            <div style={{ flex: 1, height: 1, background: 'rgba(26,43,60,0.14)' }} />
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--tan)' }}>Dev</span>
-            <div style={{ flex: 1, height: 1, background: 'rgba(26,43,60,0.14)' }} />
-          </div>
-          <button onClick={onAuth} style={{
-            width: '100%', 
-            padding: '12px', 
-            border: '2px dashed rgba(26,43,60,0.25)', 
-            borderRadius: 'var(--radius)',
-            cursor: 'pointer', 
-            fontSize: 13, 
-            background: 'transparent', 
-            color: 'var(--navy)',
-            opacity: 0.7,
-            fontFamily: 'var(--font-display)',
-            fontWeight: 700,
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em'
-          }}>
-            Skip Auth (Dev Mode) →
-          </button>
-        </>
-      )}
+      <div className="retro-divider" style={{ display: "flex", alignItems: "center", gap: 16, margin: "1.5rem 0" }}>
+        <div style={{ flex: 1, height: 1, background: "rgba(26,43,60,0.14)" }} />
+        <span style={{ fontFamily: "var(--font-display)", fontSize: 11, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--tan)" }}>Testing</span>
+        <div style={{ flex: 1, height: 1, background: "rgba(26,43,60,0.14)" }} />
+      </div>
+      <button onClick={handleDemo} disabled={loading} style={{
+        width: "100%",
+        padding: "12px",
+        border: "2px dashed rgba(26,43,60,0.25)",
+        borderRadius: "var(--radius)",
+        cursor: loading ? "not-allowed" : "pointer",
+        fontSize: 13,
+        background: "transparent",
+        color: "var(--navy)",
+        opacity: loading ? 0.4 : 0.7,
+        fontFamily: "var(--font-display)",
+        fontWeight: 700,
+        textTransform: "uppercase",
+        letterSpacing: "0.1em"
+      }}>
+        {loading ? "Loading..." : "Skip - enter app (testing)"}
+      </button>
     </div>
   )
 }

@@ -23,6 +23,13 @@ export default function Auth({ onAuth }: AuthProps) {
     checkRateLimit()
   }, [email])
 
+  const friendlyAuthError = (raw: string) => {
+    if (raw === 'Failed to fetch' || raw === 'Load failed' || raw.toLowerCase().includes('fetch')) {
+      return 'Cannot reach the auth server. Check your connection and that Supabase is configured on Vercel Production (NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY), then redeploy.'
+    }
+    return raw
+  }
+
   const checkRateLimit = async () => {
     try {
       const res = await fetch(`/api/rate-limit?email=${encodeURIComponent(email)}`)
@@ -70,7 +77,7 @@ export default function Auth({ onAuth }: AuthProps) {
             })
           } catch {}
           setAttemptCount(c => c + 1)
-          setError(error.message)
+          setError(friendlyAuthError(error.message))
           await checkRateLimit()
           return
         }
@@ -87,7 +94,7 @@ export default function Auth({ onAuth }: AuthProps) {
             })
           } catch {}
           setAttemptCount(c => c + 1)
-          setError(error.message)
+          setError(friendlyAuthError(error.message))
           await checkRateLimit()
           return
         }

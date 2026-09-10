@@ -4,6 +4,9 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
 
 ## [Unreleased]
 
+### Fixed
+- **DEVELOPER.md hemisphere wording** — Aligned "The Pipeline" stage descriptions with README roles (Left analytical vs Right creative/refine-not-replace) and fixed header typo. Docs-only, no app code touched.
+
 ## [0.3.1] - 2025-06-07
 
 ### Added

@@ -36,13 +36,13 @@ supabase/migrations/            # Database schema
 
 ## The Pipeline
 
-The heart of the app. Six stages:
+The heart of the app. Six stages (see README "What This Is" — Left = structure/accuracy/reasoning, Right = warmth/humanity/synthesis):
 
-1. **Left analyze** — Left hemisphere processes the query
-2. **Left self-check** — Left reviews its own output
-3. **Handoff** — Reasoning stub extracted for Right
-4. **Right refine** — Right hemisphere warms the output
-5. **Right self-check** — Right verifies substance preserved
+1. **Left analyze** — Left hemisphere drafts the analytical answer: structure, accuracy, reasoning. Direct, no fluff, no softening — get it right, don't worry about warmth.
+2. **Left self-check** — Left reviews its own output as an adversarial auditor: find the flaw, don't just confirm.
+3. **Handoff** — Reasoning stub extracted for Right (why the conclusions were reached, not just what they are).
+4. **Right refine** — Right hemisphere refines for warmth, clarity, and humanity. Refine, not replace: no new facts, no trimmed substance.
+5. **Right self-check** — Right verifies the substance was preserved and the output is warmer/clearer, not just vaguer.
 6. **Pre-flight scan** — Automated quality check (sanity, balance, quality)
 
 If pre-flight fails → triage protocol (max 1 retry).

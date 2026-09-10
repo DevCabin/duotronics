@@ -54,7 +54,13 @@ export async function POST(req: NextRequest) {
       right_key_encrypted: rightEncrypted,
     }, { onConflict: 'user_id' })
 
-  if (error) return NextResponse.json({ error: 'Failed to save config' }, { status: 500 })
+  if (error) {
+    console.error('[session POST] upsert failed:', error.message, error.details, error.hint)
+    return NextResponse.json(
+      { error: 'Failed to save config', detail: error.message },
+      { status: 500 }
+    )
+  }
 
   return NextResponse.json({ success: true })
 }

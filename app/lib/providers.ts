@@ -9,7 +9,7 @@ export interface ProviderConfig {
 }
 
 export const DEFAULT_MODELS: Record<Provider, string> = {
-  anthropic: 'claude-sonnet-4-5-20250929',
+  anthropic: 'claude-sonnet-5',
   openai: 'gpt-4o',
   google: 'gemini-2.5-pro',
   moonshot: 'moonshot-v1-8k',

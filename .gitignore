@@ -1,5 +1,7 @@
 .env.local
 .env
+sendgrid.env
+*.env
 .next/
 node_modules/
 out/

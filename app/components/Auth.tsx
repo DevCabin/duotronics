@@ -15,6 +15,7 @@ export default function Auth({ onAuth }: AuthProps) {
   const [message, setMessage] = useState('')
   const [rateLimitInfo, setRateLimitInfo] = useState<{ message: string; contactLink?: boolean } | null>(null)
   const [attemptCount, setAttemptCount] = useState(0)
+  const [resending, setResending] = useState(false)
   const supabase = createClient()
 
   // Check rate limit on mount and when email changes
@@ -27,7 +28,24 @@ export default function Auth({ onAuth }: AuthProps) {
     if (raw === 'Failed to fetch' || raw === 'Load failed' || raw.toLowerCase().includes('fetch')) {
       return 'Cannot reach the auth server. Check your connection and that Supabase is configured on Vercel Production (NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY), then redeploy.'
     }
+    if (raw.toLowerCase().includes('error sending confirmation email')) {
+      return 'Account created, but the confirmation email failed to send — Supabase could not reach the SMTP server (SendGrid). Check Supabase → Auth → SMTP settings (host smtp.sendgrid.net:587, user apikey, verified sender) and SendGrid → Activity, then use Resend below.'
+    }
     return raw
+  }
+
+  const handleResend = async () => {
+    if (!email) { setError('Enter your email above, then resend.'); return }
+    setError(''); setMessage(''); setResending(true)
+    try {
+      const { error } = await supabase.auth.resend({ type: 'signup', email })
+      if (error) { setError(friendlyAuthError(error.message)); return }
+      setMessage('Confirmation email resent. Check inbox + spam.')
+    } catch (e: any) {
+      setError(friendlyAuthError(e?.message ?? 'Failed to fetch'))
+    } finally {
+      setResending(false)
+    }
   }
 
   const checkRateLimit = async () => {
@@ -196,6 +214,15 @@ export default function Auth({ onAuth }: AuthProps) {
 
       {error && <div className="error-note" style={{ borderLeft: '5px solid var(--rust)', background: 'rgba(139,58,28,0.08)', borderRadius: '0 var(--radius) var(--radius) 0' }}>{error}</div>}
       {message && <div className="success-note">{message}</div>}
+      {mode === 'signup' && (
+        <button
+          onClick={handleResend}
+          disabled={resending || !email}
+          style={{ fontSize: 12, color: 'var(--teal)', background: 'none', border: 'none', cursor: resending || !email ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-body)', textDecoration: 'underline', marginBottom: 16, opacity: resending || !email ? 0.5 : 1 }}
+        >
+          {resending ? 'Resending…' : "Didn't get the email? Resend confirmation"}
+        </button>
+      )}
       {rateLimitInfo && (
         <div style={{ 
           borderLeft: '5px solid var(--orange)', 

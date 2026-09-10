@@ -91,7 +91,11 @@ async function handlePipeline(req: NextRequest) {
       .single()
 
     if (sessionError || !session) {
-      return NextResponse.json({ error: 'Failed to save session' }, { status: 500 })
+      console.error('[pipeline] session insert failed:', sessionError?.message, sessionError?.details, sessionError?.hint)
+      return NextResponse.json(
+        { error: 'Failed to save session', detail: sessionError?.message ?? 'unknown' },
+        { status: 500 }
+      )
     }
 
     const { data: savedResult, error: resultError } = await supabase
@@ -111,7 +115,11 @@ async function handlePipeline(req: NextRequest) {
       .single()
 
     if (resultError || !savedResult) {
-      return NextResponse.json({ error: 'Failed to save result' }, { status: 500 })
+      console.error('[pipeline] result insert failed:', resultError?.message, resultError?.details, resultError?.hint)
+      return NextResponse.json(
+        { error: 'Failed to save result', detail: resultError?.message ?? 'unknown' },
+        { status: 500 }
+      )
     }
     resultId = savedResult.id
   }

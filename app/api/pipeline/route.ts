@@ -14,7 +14,25 @@ function getUserId(req: NextRequest): string | null {
   return null
 }
 
+export const maxDuration = 60
+
 export async function POST(req: NextRequest) {
+  try {
+    return await handlePipeline(req)
+  } catch (err: any) {
+    console.error('[pipeline] unhandled error:', err?.message, err?.stack?.split('\n')[1] ?? '')
+    const detail = err?.message ?? 'Unknown error'
+    const status = detail.includes('ENCRYPTION_SECRET') || detail.includes('decrypt')
+      ? 500
+      : 502
+    return NextResponse.json(
+      { error: `Pipeline failed: ${detail}` },
+      { status }
+    )
+  }
+}
+
+async function handlePipeline(req: NextRequest) {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   const userId = user?.id ?? getUserId(req)

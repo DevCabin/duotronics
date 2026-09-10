@@ -111,7 +111,9 @@ export default function Home() {
         },
         body: JSON.stringify({ q1, q2, q3 }),
       })
-      const data = await res.json()
+      const text = await res.text()
+      let data: any = {}
+      try { data = JSON.parse(text) } catch { data = { error: text.slice(0, 200) || 'Empty response' } }
 
       if (!res.ok) {
         setPipelineError(data.error ?? 'Something went wrong.')

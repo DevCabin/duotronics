@@ -9,7 +9,7 @@ export interface ProviderConfig {
 }
 
 export const DEFAULT_MODELS: Record<Provider, string> = {
-  anthropic: 'claude-sonnet-4-5',
+  anthropic: 'claude-sonnet-4-5-latest',
   openai: 'gpt-4o',
   google: 'gemini-2.5-pro',
   moonshot: 'moonshot-v1-8k',
@@ -18,7 +18,7 @@ export const DEFAULT_MODELS: Record<Provider, string> = {
 
 // Left Hemisphere: cheap-but-passable chat models (not frontier).
 export const LEFT_MODELS: Record<Provider, string> = {
-  anthropic: 'claude-3-5-haiku',
+  anthropic: 'claude-3-5-haiku-20241022',
   openai: 'gpt-4o-mini',
   google: 'gemini-2.0-flash',
   moonshot: 'moonshot-v1-8k',
@@ -27,7 +27,7 @@ export const LEFT_MODELS: Record<Provider, string> = {
 
 // Right Hemisphere: highly capable models, one or two tiers below frontier.
 export const RIGHT_MODELS: Record<Provider, string> = {
-  anthropic: 'claude-sonnet-4-5',
+  anthropic: 'claude-sonnet-4-5-latest',
   openai: 'gpt-4o',
   google: 'gemini-2.5-flash',
   moonshot: 'moonshot-v1-32k',

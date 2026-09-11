@@ -1,3 +1,4 @@
+import ModelStrategy from "./ModelStrategy"
 export default function AboutPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--cream)', position: 'relative', overflow: 'hidden' }}>
@@ -300,6 +301,8 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      <ModelStrategy />
 
       {/* Research Context Card */}
       <section style={{

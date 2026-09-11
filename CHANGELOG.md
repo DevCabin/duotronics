@@ -9,14 +9,17 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
 - **Client-side stage logging** — `page.tsx` now logs each pipeline stage transition to the browser console so live Vercel testing doesn't require dashboard log access.
 - **Non-blocking result save** — `/api/pipeline` no longer fails the whole request when the Supabase `sessions`/`results` insert fails. It returns the LLM output with a `saveError` warning, disables rating, and shows the error in the UI.
 
+- **About page model strategy section** — Added a "Model Strategy" section to `/about` (`app/about/ModelStrategy.tsx`) explaining the Cheap Left / Capable Right pairing and showing the per-provider model table.
+
 ### Fixed
+- **Anthropic model retirement** — Right Hemi Anthropic model moved from `claude-sonnet-4-5` to `claude-sonnet-4-5-latest` after Anthropic retired `claude-sonnet-4-20250514` (June 15, 2026). Left Hemi Anthropic uses the valid snapshot `claude-3-5-haiku-20241022`.
 - **DEVELOPER.md hemisphere wording** — Aligned "The Pipeline" stage descriptions with README roles (Left analytical vs Right creative/refine-not-replace) and fixed header typo. Docs-only, no app code touched.
 - **Auth login/signup hardening (Failed to fetch)** — `Auth.tsx` now wraps the full email flow in try/catch, guards rate-limit fetches so cold-starts don't block auth, and maps `Failed to fetch` to an actionable Vercel/Supabase config message. `supabase.ts` logs a clear error when `NEXT_PUBLIC_*` vars are missing. Added `middleware.ts` session refresh (was missing, caused silent 401s after token expiry). `/auth/callback` surfaces exchange errors via `?auth_error=`. `page.tsx` init/handleAuth now guard fetch failures. Live-only fix; no local `.env` changes.
 - **Auth SMTP error mapping + Resend confirmation** — `Auth.tsx` maps `Error sending confirmation email` (Supabase 500 via custom SMTP) to actionable Supabase SMTP/SendGrid guidance, adds a `Resend confirmation` button (`auth.resend type: signup`). `.gitignore` now covers `sendgrid.env`/`*.env` so the local SendGrid key can't be committed.
 
 ### Changed
 - **Simplified dual-hemisphere pipeline** — Reduced the core flow from 6+ sequential LLM calls to 3–4 calls: Left analyze → Right accuracy check/re-process → Right humanize → Final approval. Removed Left self-check, reasoning stub, Right self-check, preflight scan, and triage recursion. Right Hemi now returns JSON with `accurate`/`confidence_score`/`response`; re-runs once if confidence is below 85. Added per-stage `console.log` instrumentation. Updated `PipelineProgress` stage list and `page.tsx` subtitles to match.
-- **Tiered model selection by hemisphere** — Added `LEFT_MODELS` and `RIGHT_MODELS` maps in `providers.ts` and wired them into `/api/pipeline`. Left Hemisphere now uses cheap-but-capable chat models (`claude-3-5-haiku`, `gpt-4o-mini`, `gemini-2.0-flash`, `moonshot-v1-8k`, `grok-2-mini`). Right Hemisphere uses highly capable, non-frontier models (`claude-sonnet-4-5`, `gpt-4o`, `gemini-2.5-flash`, `moonshot-v1-32k`, `grok-2-1212`). `DEFAULT_MODELS` is retained as a fallback for direct `callProvider()` usage.
+- **Tiered model selection by hemisphere** — Added `LEFT_MODELS` and `RIGHT_MODELS` maps in `providers.ts` and wired them into `/api/pipeline`. Left Hemisphere now uses cheap-but-capable chat models (`claude-3-5-haiku-20241022`, `gpt-4o-mini`, `gemini-2.0-flash`, `moonshot-v1-8k`, `grok-2-mini`). Right Hemisphere uses highly capable, non-frontier models (`claude-sonnet-4-5-latest`, `gpt-4o`, `gemini-2.5-flash`, `moonshot-v1-32k`, `grok-2-1212`). `DEFAULT_MODELS` is retained as a fallback for direct `callProvider()` usage.
 
 ## [0.3.1] - 2025-06-07
 
@@ -29,7 +32,10 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
 - Auth callback handler (`/auth/callback`) for email verification redirects
 - Dynamic email redirect URL based on `window.location.origin`
 
+- **About page model strategy section** — Added a "Model Strategy" section to `/about` (`app/about/ModelStrategy.tsx`) explaining the Cheap Left / Capable Right pairing and showing the per-provider model table.
+
 ### Fixed
+- **Anthropic model retirement** — Right Hemi Anthropic model moved from `claude-sonnet-4-5` to `claude-sonnet-4-5-latest` after Anthropic retired `claude-sonnet-4-20250514` (June 15, 2026). Left Hemi Anthropic uses the valid snapshot `claude-3-5-haiku-20241022`.
 - Email verification links now redirect to production URL instead of localhost
 
 ## [0.3.0] - 2025-06-07
@@ -79,7 +85,10 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
   - All LLM calls route through `callProvider()`
   - Dynamic imports for tree-shaking
 
+- **About page model strategy section** — Added a "Model Strategy" section to `/about` (`app/about/ModelStrategy.tsx`) explaining the Cheap Left / Capable Right pairing and showing the per-provider model table.
+
 ### Fixed
+- **Anthropic model retirement** — Right Hemi Anthropic model moved from `claude-sonnet-4-5` to `claude-sonnet-4-5-latest` after Anthropic retired `claude-sonnet-4-20250514` (June 15, 2026). Left Hemi Anthropic uses the valid snapshot `claude-3-5-haiku-20241022`.
 - Left/Right provider validation
   - UI blocks selection of same provider
   - API enforces constraint with 400 error

@@ -22,7 +22,7 @@ Duotronics runs queries through two different LLM providers:
 - **Left hemisphere** (analytical): Structure, accuracy, reasoning
 - **Right hemisphere** (creative): Warmth, humanity, synthesis
 
-The pipeline: Left analyzes → Left self-checks → Handoff → Right refines → Right self-checks → Pre-flight scan → Results.
+The pipeline: Left analyzes → Right checks accuracy vs. the original query (re-processes if confidence is low) → Right humanizes → Final result.
 
 ## Stack
 
@@ -50,6 +50,10 @@ ENCRYPTION_SECRET=                  # Generate: openssl rand -base64 32
 - Left and Right providers must be different (enforced in UI + API)
 - API keys are encrypted server-side (AES-256-GCM)
 - Triage retry limit: 1 (hardcoded in `pipeline.ts`)
+
+## Roadmap / Next Steps
+
+- [ ] **User-selectable models** — add user control to choose the model for each hemisphere under the chosen AI provider (broaden experiment parameters). Today models are auto-assigned via `LEFT_MODELS` / `RIGHT_MODELS` in `providers.ts`.
 
 ## Documentation
 

@@ -36,16 +36,15 @@ supabase/migrations/            # Database schema
 
 ## The Pipeline
 
-The heart of the app. Six stages (see README "What This Is" — Left = structure/accuracy/reasoning, Right = warmth/humanity/synthesis):
+The heart of the app. A simplified flow (see README "What This Is" — Left = structure/accuracy/reasoning, Right = warmth/humanity/synthesis):
 
-1. **Left analyze** — Left hemisphere drafts the analytical answer: structure, accuracy, reasoning. Direct, no fluff, no softening — get it right, don't worry about warmth.
-2. **Left self-check** — Left reviews its own output as an adversarial auditor: find the flaw, don't just confirm.
-3. **Handoff** — Reasoning stub extracted for Right (why the conclusions were reached, not just what they are).
-4. **Right refine** — Right hemisphere refines for warmth, clarity, and humanity. Refine, not replace: no new facts, no trimmed substance.
-5. **Right self-check** — Right verifies the substance was preserved and the output is warmer/clearer, not just vaguer.
-6. **Pre-flight scan** — Automated quality check (sanity, balance, quality)
+1. **Left analyze** — Left hemisphere drafts the analytical answer: structure, accuracy, reasoning. Direct, no fluff. Uses a cheap-but-capable model (`LEFT_MODELS`).
+2. **Right process** — Right hemisphere checks the draft against the original query and returns JSON with `accurate`, `confidence_score`, `response`. Uses a highly capable, non-frontier model (`RIGHT_MODELS`).
+3. **Right verify / re-process** — If confidence is below 85 (or `accurate` is false), Right re-runs once to produce a corrected response.
+4. **Right humanize** — Right rewrites the approved accurate answer to be warm, clear, and human without changing substance.
+5. **Final approval** — Returns the result to the user.
 
-If pre-flight fails → triage protocol (max 1 retry).
+Right Hemi model tier is a "one or two models below frontier" for cost while keeping capability.
 
 See `app/lib/pipeline.ts` for implementation.
 
@@ -225,6 +224,11 @@ DEBUG=1
 ```
 
 Then check Vercel Functions logs for detailed output.
+
+## Roadmap / Next Steps
+
+- [ ] **User-selectable models** — add a control in the wizard/intake flow so users can pick the model for each hemisphere under the chosen AI provider. Today models are auto-assigned via `LEFT_MODELS` / `RIGHT_MODELS` in `providers.ts`. This would broaden experiment parameters.
+  - Where: `app/components/wizard/Wizard.tsx`, `app/lib/providers.ts` (expose `PROVIDER_MODELS` per provider), `app/api/session/route.ts` (persist chosen models), `app/api/pipeline/route.ts` (use stored models).
 
 ## Questions?
 

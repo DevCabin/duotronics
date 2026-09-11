@@ -1,4 +1,5 @@
 import ModelStrategy from "./ModelStrategy"
+import UpNext from "./UpNext"
 export default function AboutPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--cream)', position: 'relative', overflow: 'hidden' }}>
@@ -303,6 +304,8 @@ export default function AboutPage() {
       </section>
 
       <ModelStrategy />
+
+      <UpNext />
 
       {/* Research Context Card */}
       <section style={{

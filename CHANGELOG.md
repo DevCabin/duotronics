@@ -10,6 +10,7 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
 - **Non-blocking result save** — `/api/pipeline` no longer fails the whole request when the Supabase `sessions`/`results` insert fails. It returns the LLM output with a `saveError` warning, disables rating, and shows the error in the UI.
 
 - **About page model strategy section** — Added a "Model Strategy" section to `/about` (`app/about/ModelStrategy.tsx`) explaining the Cheap Left / Capable Right pairing and showing the per-provider model table.
+- **About page "Up Next" section** — Added an "Up Next" section (`app/about/UpNext.tsx`) to `/about` highlighting the next experiment lever: user-selectable models per hemisphere.
 
 ### Fixed
 - **Anthropic model retirement** — Right Hemi Anthropic model moved from `claude-sonnet-4-5` to `claude-sonnet-4-5-latest` after Anthropic retired `claude-sonnet-4-20250514` (June 15, 2026). Left Hemi Anthropic uses the valid snapshot `claude-3-5-haiku-20241022`.
@@ -35,10 +36,7 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
 - Auth callback handler (`/auth/callback`) for email verification redirects
 - Dynamic email redirect URL based on `window.location.origin`
 
-- **About page model strategy section** — Added a "Model Strategy" section to `/about` (`app/about/ModelStrategy.tsx`) explaining the Cheap Left / Capable Right pairing and showing the per-provider model table.
-
 ### Fixed
-- **Anthropic model retirement** — Right Hemi Anthropic model moved from `claude-sonnet-4-5` to `claude-sonnet-4-5-latest` after Anthropic retired `claude-sonnet-4-20250514` (June 15, 2026). Left Hemi Anthropic uses the valid snapshot `claude-3-5-haiku-20241022`.
 - Email verification links now redirect to production URL instead of localhost
 
 ## [0.3.0] - 2025-06-07
@@ -88,10 +86,7 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
   - All LLM calls route through `callProvider()`
   - Dynamic imports for tree-shaking
 
-- **About page model strategy section** — Added a "Model Strategy" section to `/about` (`app/about/ModelStrategy.tsx`) explaining the Cheap Left / Capable Right pairing and showing the per-provider model table.
-
 ### Fixed
-- **Anthropic model retirement** — Right Hemi Anthropic model moved from `claude-sonnet-4-5` to `claude-sonnet-4-5-latest` after Anthropic retired `claude-sonnet-4-20250514` (June 15, 2026). Left Hemi Anthropic uses the valid snapshot `claude-3-5-haiku-20241022`.
 - Left/Right provider validation
   - UI blocks selection of same provider
   - API enforces constraint with 400 error

@@ -22,11 +22,10 @@ interface PipelineResult {
 
 const STAGE_SUBTITLES: Record<string, string> = {
   'left-analyze': 'Left hemisphere is analyzing your query...',
-  'left-check': 'Left hemisphere is checking its own work...',
-  'handoff': 'Packaging reasoning context for handoff...',
-  'right-refine': 'Right hemisphere is refining and warming the output...',
-  'right-check': 'Right hemisphere is verifying substance was preserved...',
-  'preflight': 'Running pre-flight scan — sanity, balance, quality...',
+  'right-process': 'Right hemisphere is checking accuracy...',
+  'right-verify': 'Right hemisphere is verifying or re-processing...',
+  'right-humanize': 'Right hemisphere is making the answer warm and human...',
+  'final-approval': 'Finalizing and returning your result...',
 }
 
 export default function Home() {
@@ -284,7 +283,7 @@ export default function Home() {
           fontFamily: 'var(--font-body)',
           margin: 0
         }}>
-          Configure two AI providers to analyze and refine your queries through a six-stage pipeline.
+          Configure two AI providers to analyze and refine your queries through a dual-hemisphere pipeline.
         </p>
         <a 
           href="/about"

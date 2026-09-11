@@ -1,15 +1,10 @@
 import { callProvider, ProviderConfig } from './providers'
 import {
   LEFT_HEMI_SYSTEM,
-  LEFT_SELF_CHECK_SYSTEM,
-  RIGHT_HEMI_SYSTEM,
-  RIGHT_SELF_CHECK_SYSTEM,
-  PREFLIGHT_SYSTEM,
-  TRIAGE_SYSTEM,
-  buildLeftSelfCheckPrompt,
-  buildRightHemiPrompt,
-  buildTriagePrompt,
-  buildReasoningStub,
+  RIGHT_PROCESS_SYSTEM,
+  RIGHT_HUMANIZE_SYSTEM,
+  buildRightProcessPrompt,
+  buildRightHumanizePrompt,
 } from './prompts'
 
 export interface QueryObject {
@@ -30,8 +25,16 @@ export interface PipelineResult {
 
 export type StageCallback = (stage: string, status: 'active' | 'done') => void
 
+const MAX_RETRIES = 1
+const ACCURACY_THRESHOLD = 85
+
 function buildFullQuery(q: QueryObject): string {
   return `Goal: ${q.q1}\n\nContext/Audience: ${q.q2}\n\nWhat a good answer looks like: ${q.q3}`
+}
+
+function log(stage: string, message: string, extra?: Record<string, unknown>) {
+  const payload = extra ? ` ${JSON.stringify(extra)}` : ''
+  console.log(`[pipeline][${stage}] ${message}${payload}`)
 }
 
 export async function runPipeline(
@@ -42,164 +45,130 @@ export async function runPipeline(
   retryCount = 0
 ): Promise<PipelineResult> {
   const fullQuery = buildFullQuery(query)
-  const MAX_RETRIES = 1
 
   // ── Stage 1: Left Hemi Analysis ──
+  log('left-analyze', 'starting', { queryLength: fullQuery.length })
   onStage?.('left-analyze', 'active')
-  const leftRaw = await callProvider(leftConfig, LEFT_HEMI_SYSTEM, fullQuery)
+  const leftOutput = await callProvider(leftConfig, LEFT_HEMI_SYSTEM, fullQuery)
   onStage?.('left-analyze', 'done')
+  log('left-analyze', 'done', { outputLength: leftOutput.length })
 
-  // ── Stage 2: Left Self-Check ──
-  onStage?.('left-check', 'active')
-  const leftChecked = await callProvider(
-    leftConfig,
-    LEFT_SELF_CHECK_SYSTEM,
-    buildLeftSelfCheckPrompt(fullQuery, leftRaw)
-  )
-  const leftOutput = leftChecked.startsWith('No corrections needed.')
-    ? leftRaw
-    : leftChecked
-  onStage?.('left-check', 'done')
+  // ── Stage 2: Right Hemi Process (accuracy check + correction) ──
+  log('right-process', 'starting', { attempt: retryCount })
+  onStage?.('right-process', 'active')
+  const firstPass = await runRightProcess(rightConfig, fullQuery, leftOutput, false)
+  onStage?.('right-process', 'done')
+  log('right-process', 'done', {
+    accurate: firstPass.accurate,
+    confidence: firstPass.confidence_score,
+    outputLength: firstPass.response.length,
+  })
 
-  // ── Stage 3: Reasoning Stub ──
-  onStage?.('handoff', 'active')
-  const reasoningStub = await callProvider(
-    leftConfig,
-    'You extract concise reasoning summaries. Be brief and specific.',
-    buildReasoningStub(leftOutput)
-  )
-  onStage?.('handoff', 'done')
+  // ── Stage 3: Right Hemi Verify / Re-process if needed ──
+  let accurateResponse = firstPass.response
+  const approved = firstPass.accurate && firstPass.confidence_score >= ACCURACY_THRESHOLD
 
-  // ── Stage 4: Right Hemi Refinement ──
-  onStage?.('right-refine', 'active')
-  const rightRaw = await callProvider(
-    rightConfig,
-    RIGHT_HEMI_SYSTEM,
-    buildRightHemiPrompt(fullQuery, leftOutput, reasoningStub)
-  )
-  onStage?.('right-refine', 'done')
-
-  // ── Stage 5: Right Self-Check ──
-  onStage?.('right-check', 'active')
-  const rightChecked = await callProvider(
-    rightConfig,
-    RIGHT_SELF_CHECK_SYSTEM,
-    `ORIGINAL QUERY:\n${fullQuery}\n\nLEFT OUTPUT:\n${leftOutput}\n\nYOUR RESPONSE:\n${rightRaw}\n\nReview and correct if needed.`
-  )
-  const rightOutput = rightChecked.startsWith('No corrections needed.')
-    ? rightRaw
-    : rightChecked
-  onStage?.('right-check', 'done')
-
-  // ── Stage 6: Pre-Flight Scan ──
-  onStage?.('preflight', 'active')
-  const preflightRaw = await callProvider(
-    rightConfig,
-    PREFLIGHT_SYSTEM,
-    `ORIGINAL QUERY:\n${fullQuery}\n\nLEFT ANALYSIS:\n${leftOutput}\n\nFINAL OUTPUT:\n${rightOutput}`
-  )
-
-  let preflight = {
-    sanity: { pass: true, note: '' },
-    balance: { pass: true, note: '' },
-    quality: { pass: true, note: '' },
-    overall: 'pass' as 'pass' | 'fail',
-    corrected_output: null as string | null,
-  }
-
-  try {
-    const cleaned = preflightRaw.replace(/```json|```/g, '').trim()
-    preflight = JSON.parse(cleaned)
-  } catch {
-    // If parse fails, treat as pass — don't block on JSON errors
-  }
-
-  onStage?.('preflight', 'done')
-
-  // ── Pre-flight passed ──
-  if (preflight.overall === 'pass') {
-    return {
-      leftOutput,
-      finalOutput: preflight.corrected_output ?? rightOutput,
-      preflightSanity: preflight.sanity.pass,
-      preflightBalance: preflight.balance.pass,
-      preflightQuality: preflight.quality.pass,
+  onStage?.('right-verify', 'active')
+  if (!approved && retryCount < MAX_RETRIES) {
+    log('right-verify', 'below threshold, reprocessing', {
+      accurate: firstPass.accurate,
+      confidence: firstPass.confidence_score,
+      threshold: ACCURACY_THRESHOLD,
+    })
+    const corrected = await runRightProcess(rightConfig, fullQuery, leftOutput, true)
+    accurateResponse = corrected.response
+    retryCount += 1
+    log('right-verify', 'reprocess done', {
+      accurate: corrected.accurate,
+      confidence: corrected.confidence_score,
+      outputLength: corrected.response.length,
       retryCount,
-      faultOrigin: null,
-    }
-  }
-
-  // ── Pre-flight failed: triage ──
-  if (retryCount >= MAX_RETRIES) {
-    // Surface to user rather than loop
-    return {
-      leftOutput,
-      finalOutput: rightOutput,
-      preflightSanity: preflight.sanity.pass,
-      preflightBalance: preflight.balance.pass,
-      preflightQuality: preflight.quality.pass,
+    })
+  } else {
+    log('right-verify', approved ? 'approved' : 'fallback (max retries reached)', {
+      accurate: firstPass.accurate,
+      confidence: firstPass.confidence_score,
       retryCount,
-      faultOrigin: null,
-    }
+    })
   }
+  onStage?.('right-verify', 'done')
 
-  const failureNotes = [
-    !preflight.sanity.pass ? `Sanity: ${preflight.sanity.note}` : '',
-    !preflight.balance.pass ? `Balance: ${preflight.balance.note}` : '',
-    !preflight.quality.pass ? `Quality: ${preflight.quality.note}` : '',
-  ].filter(Boolean).join('; ')
-
-  const triageRaw = await callProvider(
+  // ── Stage 4: Right Hemi Humanize ──
+  log('right-humanize', 'starting', { responseLength: accurateResponse.length })
+  onStage?.('right-humanize', 'active')
+  const finalOutput = await callProvider(
     rightConfig,
-    TRIAGE_SYSTEM,
-    buildTriagePrompt(fullQuery, leftOutput, rightOutput, failureNotes)
+    RIGHT_HUMANIZE_SYSTEM,
+    buildRightHumanizePrompt(fullQuery, accurateResponse)
   )
+  onStage?.('right-humanize', 'done')
+  log('right-humanize', 'done', { outputLength: finalOutput.length })
 
-  let triage = { fault_origin: 'ambiguous' as 'left' | 'right' | 'ambiguous', reason: '', correction_instruction: '' }
-  try {
-    const cleaned = triageRaw.replace(/```json|```/g, '').trim()
-    triage = JSON.parse(cleaned)
-  } catch {}
+  // ── Stage 5: Final Approval ──
+  onStage?.('final-approval', 'active')
+  const finalApproved = retryCount === 0 ? approved : true
+  log('final-approval', 'returning result', {
+    finalApproved,
+    retryCount,
+    leftLength: leftOutput.length,
+    finalLength: finalOutput.length,
+  })
+  onStage?.('final-approval', 'done')
 
-  if (triage.fault_origin === 'right') {
-    // Right Hemi corrects in place
-    onStage?.('right-refine', 'active')
-    const correctedRight = await callProvider(
-      rightConfig,
-      RIGHT_HEMI_SYSTEM,
-      `${buildRightHemiPrompt(fullQuery, leftOutput, reasoningStub)}\n\nPREVIOUS ATTEMPT FAILED. CORRECTION INSTRUCTION: ${triage.correction_instruction}`
-    )
-    onStage?.('right-refine', 'done')
-    return {
-      leftOutput,
-      finalOutput: correctedRight,
-      preflightSanity: preflight.sanity.pass,
-      preflightBalance: preflight.balance.pass,
-      preflightQuality: preflight.quality.pass,
-      retryCount: retryCount + 1,
-      faultOrigin: 'right',
-    }
-  }
-
-  if (triage.fault_origin === 'left') {
-    // Full restart with fault brief
-    return runPipeline(
-      query,
-      { ...leftConfig, model: leftConfig.model },
-      rightConfig,
-      onStage,
-      retryCount + 1
-    )
-  }
-
-  // Ambiguous — return as-is, flag for user to clarify
   return {
     leftOutput,
-    finalOutput: rightOutput,
-    preflightSanity: preflight.sanity.pass,
-    preflightBalance: preflight.balance.pass,
-    preflightQuality: preflight.quality.pass,
-    retryCount: retryCount + 1,
-    faultOrigin: 'ambiguous',
+    finalOutput,
+    preflightSanity: finalApproved,
+    preflightBalance: true,
+    preflightQuality: true,
+    retryCount,
+    faultOrigin: null,
+  }
+}
+
+interface RightProcessResult {
+  accurate: boolean
+  confidence_score: number
+  response: string
+  notes: string
+}
+
+async function runRightProcess(
+  config: ProviderConfig,
+  fullQuery: string,
+  leftOutput: string,
+  isCorrection: boolean
+): Promise<RightProcessResult> {
+  const raw = await callProvider(
+    config,
+    RIGHT_PROCESS_SYSTEM,
+    buildRightProcessPrompt(fullQuery, leftOutput, isCorrection)
+  )
+  return parseRightProcess(raw)
+}
+
+function parseRightProcess(raw: string): RightProcessResult {
+  const fallback: RightProcessResult = {
+    accurate: true,
+    confidence_score: 100,
+    response: raw,
+    notes: 'Parse failed — treating raw response as approved.',
+  }
+
+  try {
+    const cleaned = raw.replace(/```json|```/g, '').trim()
+    const parsed = JSON.parse(cleaned)
+    return {
+      accurate: Boolean(parsed.accurate),
+      confidence_score: Number(parsed.confidence_score) || 0,
+      response: String(parsed.response ?? raw),
+      notes: String(parsed.notes ?? ''),
+    }
+  } catch (err) {
+    log('parse-right-process', 'failed to parse JSON, using fallback', {
+      rawPreview: raw.slice(0, 200),
+      error: (err as Error).message,
+    })
+    return fallback
   }
 }

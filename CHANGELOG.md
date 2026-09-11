@@ -9,6 +9,9 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
 - **Auth login/signup hardening (Failed to fetch)** — `Auth.tsx` now wraps the full email flow in try/catch, guards rate-limit fetches so cold-starts don't block auth, and maps `Failed to fetch` to an actionable Vercel/Supabase config message. `supabase.ts` logs a clear error when `NEXT_PUBLIC_*` vars are missing. Added `middleware.ts` session refresh (was missing, caused silent 401s after token expiry). `/auth/callback` surfaces exchange errors via `?auth_error=`. `page.tsx` init/handleAuth now guard fetch failures. Live-only fix; no local `.env` changes.
 - **Auth SMTP error mapping + Resend confirmation** — `Auth.tsx` maps `Error sending confirmation email` (Supabase 500 via custom SMTP) to actionable Supabase SMTP/SendGrid guidance, adds a `Resend confirmation` button (`auth.resend type: signup`). `.gitignore` now covers `sendgrid.env`/`*.env` so the local SendGrid key can't be committed.
 
+### Changed
+- **Simplified dual-hemisphere pipeline** — Reduced the core flow from 6+ sequential LLM calls to 3–4 calls: Left analyze → Right accuracy check/re-process → Right humanize → Final approval. Removed Left self-check, reasoning stub, Right self-check, preflight scan, and triage recursion. Right Hemi now returns JSON with `accurate`/`confidence_score`/`response`; re-runs once if confidence is below 85. Added per-stage `console.log` instrumentation. Updated `PipelineProgress` stage list and `page.tsx` subtitles to match.
+
 ## [0.3.1] - 2025-06-07
 
 ### Added

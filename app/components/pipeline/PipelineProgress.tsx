@@ -2,11 +2,10 @@
 
 export type StageId =
   | 'left-analyze'
-  | 'left-check'
-  | 'handoff'
-  | 'right-refine'
-  | 'right-check'
-  | 'preflight'
+  | 'right-process'
+  | 'right-verify'
+  | 'right-humanize'
+  | 'final-approval'
 
 export type StageStatus = 'pending' | 'active' | 'done' | 'error'
 
@@ -19,12 +18,11 @@ export interface StageState {
 }
 
 export const INITIAL_STAGES: StageState[] = [
-  { id: 'left-analyze', label: 'Left hemisphere — analysis', sub: 'Structuring facts and logic', hemi: 'left', status: 'pending' },
-  { id: 'left-check', label: 'Left self-check', sub: 'Find the flaw, not confirm', hemi: 'left', status: 'pending' },
-  { id: 'handoff', label: 'Handoff payload', sub: 'Answer + reasoning stub', hemi: 'neutral', status: 'pending' },
-  { id: 'right-refine', label: 'Right hemisphere — refinement', sub: 'Warmth, voice, humanity', hemi: 'right', status: 'pending' },
-  { id: 'right-check', label: 'Right self-check', sub: 'Substance preserved?', hemi: 'right', status: 'pending' },
-  { id: 'preflight', label: 'Pre-flight scan', sub: 'Sanity · Balance · Quality', hemi: 'neutral', status: 'pending' },
+  { id: 'left-analyze', label: 'Left hemisphere — analysis', sub: 'Logic, structure, accuracy', hemi: 'left', status: 'pending' },
+  { id: 'right-process', label: 'Right hemisphere — accuracy check', sub: 'Does this answer the query?', hemi: 'right', status: 'pending' },
+  { id: 'right-verify', label: 'Right hemisphere — verify / re-process', sub: 'Correct if confidence is low', hemi: 'right', status: 'pending' },
+  { id: 'right-humanize', label: 'Right hemisphere — humanize', sub: 'Warmth, clarity, voice', hemi: 'right', status: 'pending' },
+  { id: 'final-approval', label: 'Final approval', sub: 'Returning result', hemi: 'neutral', status: 'pending' },
 ]
 
 interface PipelineProgressProps {
@@ -40,11 +38,10 @@ const HEMI_COLORS = {
 
 const STAGE_ICONS: Record<StageId, string> = {
   'left-analyze': '◈',
-  'left-check': '⟳',
-  'handoff': '→',
-  'right-refine': '◑',
-  'right-check': '⟳',
-  'preflight': '✦',
+  'right-process': '◑',
+  'right-verify': '⟳',
+  'right-humanize': '☺',
+  'final-approval': '✦',
 }
 
 export default function PipelineProgress({ stages, subtitle }: PipelineProgressProps) {

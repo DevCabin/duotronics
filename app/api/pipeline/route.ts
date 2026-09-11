@@ -3,6 +3,7 @@ import { createServerSupabaseClient } from '@/app/lib/supabase-server'
 import { decryptKey } from '@/app/lib/encryption'
 import { runPipeline, QueryObject } from '@/app/lib/pipeline'
 import { getDevConfig } from '@/app/lib/dev-store'
+import { LEFT_MODELS, RIGHT_MODELS, Provider } from '@/app/lib/providers'
 
 const isDev = process.env.NODE_ENV === 'development'
 const DEV_USER_ID = 'dev-user'
@@ -70,8 +71,8 @@ async function handlePipeline(req: NextRequest) {
   // Run pipeline
   const result = await runPipeline(
     query,
-    { provider: config.left_provider, apiKey: config.left_key },
-    { provider: config.right_provider, apiKey: config.right_key }
+    { provider: config.left_provider, apiKey: config.left_key, model: LEFT_MODELS[config.left_provider as Provider] },
+    { provider: config.right_provider, apiKey: config.right_key, model: RIGHT_MODELS[config.right_provider as Provider] }
   )
 
   // Save result (or mock in dev). Don't block returning the LLM output on DB errors.

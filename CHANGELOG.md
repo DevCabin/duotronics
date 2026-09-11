@@ -16,6 +16,7 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
 
 ### Changed
 - **Simplified dual-hemisphere pipeline** — Reduced the core flow from 6+ sequential LLM calls to 3–4 calls: Left analyze → Right accuracy check/re-process → Right humanize → Final approval. Removed Left self-check, reasoning stub, Right self-check, preflight scan, and triage recursion. Right Hemi now returns JSON with `accurate`/`confidence_score`/`response`; re-runs once if confidence is below 85. Added per-stage `console.log` instrumentation. Updated `PipelineProgress` stage list and `page.tsx` subtitles to match.
+- **Tiered model selection by hemisphere** — Added `LEFT_MODELS` and `RIGHT_MODELS` maps in `providers.ts` and wired them into `/api/pipeline`. Left Hemisphere now uses cheap-but-capable chat models (`claude-3-5-haiku`, `gpt-4o-mini`, `gemini-2.0-flash`, `moonshot-v1-8k`, `grok-2-mini`). Right Hemisphere uses highly capable, non-frontier models (`claude-sonnet-4-5`, `gpt-4o`, `gemini-2.5-flash`, `moonshot-v1-32k`, `grok-2-1212`). `DEFAULT_MODELS` is retained as a fallback for direct `callProvider()` usage.
 
 ## [0.3.1] - 2025-06-07
 

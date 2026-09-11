@@ -16,6 +16,24 @@ export const DEFAULT_MODELS: Record<Provider, string> = {
   xai: 'grok-2-1212',
 }
 
+// Left Hemisphere: cheap-but-passable chat models (not frontier).
+export const LEFT_MODELS: Record<Provider, string> = {
+  anthropic: 'claude-3-5-haiku',
+  openai: 'gpt-4o-mini',
+  google: 'gemini-2.0-flash',
+  moonshot: 'moonshot-v1-8k',
+  xai: 'grok-2-mini',
+}
+
+// Right Hemisphere: highly capable models, one or two tiers below frontier.
+export const RIGHT_MODELS: Record<Provider, string> = {
+  anthropic: 'claude-sonnet-4-5',
+  openai: 'gpt-4o',
+  google: 'gemini-2.5-flash',
+  moonshot: 'moonshot-v1-32k',
+  xai: 'grok-2-1212',
+}
+
 export const PROVIDER_LABELS: Record<Provider, string> = {
   anthropic: 'Anthropic Claude',
   openai: 'OpenAI',

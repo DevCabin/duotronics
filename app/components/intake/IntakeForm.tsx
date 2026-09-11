@@ -3,10 +3,11 @@ import { useState } from 'react'
 
 interface IntakeFormProps {
   onSubmit: (q1: string, q2: string, q3: string) => void
+  onReset?: () => void
   loading: boolean
 }
 
-export default function IntakeForm({ onSubmit, loading }: IntakeFormProps) {
+export default function IntakeForm({ onSubmit, onReset, loading }: IntakeFormProps) {
   const [q1, setQ1] = useState('')
   const [q2, setQ2] = useState('')
   const [q3, setQ3] = useState('')
@@ -63,7 +64,24 @@ export default function IntakeForm({ onSubmit, loading }: IntakeFormProps) {
 
       {error && <div className="error-note">{error}</div>}
 
-      <div className="btn-row">
+      <div className="btn-row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <button
+          type="button"
+          onClick={onReset}
+          disabled={loading}
+          style={{
+            fontSize: 12,
+            color: 'var(--rust)',
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            cursor: loading ? 'not-allowed' : 'pointer',
+            textDecoration: 'underline',
+            opacity: loading ? 0.5 : 1,
+          }}
+        >
+          ← Change providers / reset config
+        </button>
         <button className="btn btn-primary" onClick={handleSubmit} disabled={loading}>
           {loading ? 'Running hemispheres...' : 'Run both hemispheres →'}
         </button>

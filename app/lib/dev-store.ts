@@ -14,6 +14,10 @@ export function setDevConfig(config: DevConfig) {
   devConfig = config
 }
 
+export function clearDevConfig() {
+  devConfig = null
+}
+
 export function getDevConfig(): DevConfig | null {
   return devConfig
 }

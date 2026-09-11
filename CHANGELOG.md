@@ -4,6 +4,9 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
 
 ## [Unreleased]
 
+### Added
+- **Reset configuration button** — Added `DELETE /api/session` and a "Change providers / reset config" link on the intake screen so users can return to the provider setup wizard. Works for both dev-mode in-memory config and Supabase persisted config.
+
 ### Fixed
 - **DEVELOPER.md hemisphere wording** — Aligned "The Pipeline" stage descriptions with README roles (Left analytical vs Right creative/refine-not-replace) and fixed header typo. Docs-only, no app code touched.
 - **Auth login/signup hardening (Failed to fetch)** — `Auth.tsx` now wraps the full email flow in try/catch, guards rate-limit fetches so cold-starts don't block auth, and maps `Failed to fetch` to an actionable Vercel/Supabase config message. `supabase.ts` logs a clear error when `NEXT_PUBLIC_*` vars are missing. Added `middleware.ts` session refresh (was missing, caused silent 401s after token expiry). `/auth/callback` surfaces exchange errors via `?auth_error=`. `page.tsx` init/handleAuth now guard fetch failures. Live-only fix; no local `.env` changes.

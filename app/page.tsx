@@ -92,6 +92,19 @@ export default function Home() {
     }))
   }
 
+  const handleResetConfig = async () => {
+    try {
+      await fetch('/api/session', {
+        method: 'DELETE',
+        headers: isDevBypass ? { 'x-dev-bypass': 'true' } : {}
+      })
+    } catch (err) {
+      console.error('[resetConfig] failed:', err)
+    }
+    setResult(null)
+    setScreen('wizard')
+  }
+
   const handleIntakeSubmit = async (q1: string, q2: string, q3: string) => {
     setScreen('processing')
     setStages(INITIAL_STAGES)
@@ -309,7 +322,7 @@ export default function Home() {
         {screen === 'intake' && (
           <>
             {pipelineError && <div className="error-note">{pipelineError}</div>}
-            <IntakeForm onSubmit={handleIntakeSubmit} loading={false} />
+            <IntakeForm onSubmit={handleIntakeSubmit} onReset={handleResetConfig} loading={false} />
           </>
         )}
         {screen === 'processing' && (

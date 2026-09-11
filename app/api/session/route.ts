@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/app/lib/supabase-server'
 import { encryptKey } from '@/app/lib/encryption'
-import { setDevConfig, getDevConfig } from '@/app/lib/dev-store'
+import { setDevConfig, getDevConfig, clearDevConfig } from '@/app/lib/dev-store'
 
 const isDev = process.env.NODE_ENV === 'development'
 const DEV_USER_ID = 'dev-user'
@@ -91,4 +91,29 @@ export async function GET(req: NextRequest) {
     .single()
 
   return NextResponse.json({ config: config ?? null })
+}
+
+export async function DELETE(req: NextRequest) {
+  const supabase = createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const userId = user?.id ?? getUserId(req)
+
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  if (userId === DEV_USER_ID) {
+    clearDevConfig()
+    return NextResponse.json({ success: true })
+  }
+
+  const { error } = await supabase.from('user_config').delete().eq('user_id', userId)
+
+  if (error) {
+    console.error('[session DELETE] delete failed:', error.message, error.details, error.hint)
+    return NextResponse.json(
+      { error: 'Failed to clear config', detail: error.message },
+      { status: 500 }
+    )
+  }
+
+  return NextResponse.json({ success: true })
 }

@@ -2,7 +2,7 @@
 import { useState } from 'react'
 
 interface ResultsProps {
-  resultId: string
+  resultId: string | null
   leftOutput: string
   finalOutput: string
   preflightSanity: boolean
@@ -10,6 +10,7 @@ interface ResultsProps {
   preflightQuality: boolean
   faultOrigin: 'left' | 'right' | 'ambiguous' | null
   retryCount: number
+  saveError?: string
   onNewQuery: () => void
 }
 
@@ -18,7 +19,7 @@ const STAR_LABELS = ['', 'Not helpful', 'Somewhat helpful', 'Pretty good', 'Real
 export default function Results({
   resultId, leftOutput, finalOutput,
   preflightSanity, preflightBalance, preflightQuality,
-  faultOrigin, retryCount, onNewQuery
+  faultOrigin, retryCount, saveError, onNewQuery
 }: ResultsProps) {
   const [rating, setRating] = useState(0)
   const [hovered, setHovered] = useState(0)
@@ -68,7 +69,12 @@ export default function Results({
         </div>
       </div>
 
-      {/* Flags */}
+      {/* Save warning */}
+      {(saveError || !resultId) && (
+        <div className="warning-note" style={{ marginBottom: '1rem' }}>
+          ⚠ Result generated but not saved: {saveError ?? 'No result ID returned. Rating is disabled.'}
+        </div>
+      )}
       {faultOrigin === 'ambiguous' && (
         <div className="warning-note">
           ⚠ The query may have been too ambiguous for a confident answer. Consider rephrasing and running again.
@@ -125,25 +131,25 @@ export default function Results({
           {[1,2,3,4,5].map(val => (
             <span
               key={val}
-              onClick={() => !submitted && submitRating(val)}
-              onMouseEnter={() => !submitted && setHovered(val)}
-              onMouseLeave={() => !submitted && setHovered(0)}
+              onClick={() => !submitted && resultId && submitRating(val)}
+              onMouseEnter={() => !submitted && resultId && setHovered(val)}
+              onMouseLeave={() => !submitted && resultId && setHovered(0)}
               style={{
                 fontSize: 30,
                 lineHeight: 1,
-                cursor: submitted ? 'default' : 'pointer',
+                cursor: (submitted || !resultId) ? 'default' : 'pointer',
                 color: val <= displayRating
                   ? (submitted ? 'var(--dt-star)' : 'var(--dt-star-hover)')
                   : '#d0d0c8',
                 transition: 'color 0.1s, transform 0.1s',
-                transform: (!submitted && val <= hovered) ? 'scale(1.15)' : 'scale(1)',
+                transform: (!submitted && resultId && val <= hovered) ? 'scale(1.15)' : 'scale(1)',
                 display: 'inline-block',
                 userSelect: 'none',
               }}
             >★</span>
           ))}
         </div>
-        {!submitted && hovered > 0 && (
+        {!submitted && hovered > 0 && resultId && (
           <div style={{ fontSize: 13, color: '#666' }}>{STAR_LABELS[hovered]}</div>
         )}
         {submitted && (
@@ -151,8 +157,11 @@ export default function Results({
             {rating === 5 ? `★ ${STAR_LABELS[rating]} — thanks for validating the experiment!` : `${STAR_LABELS[rating]} — thanks, this helps.`}
           </div>
         )}
-        {!submitted && hovered === 0 && (
+        {!submitted && hovered === 0 && resultId && (
           <div style={{ fontSize: 12, color: '#aaa' }}>Your rating helps validate the experiment.</div>
+        )}
+        {!resultId && (
+          <div style={{ fontSize: 12, color: '#aaa' }}>Rating disabled because this result was not saved.</div>
         )}
         {ratingError && <div style={{ fontSize: 12, color: '#A32D2D', marginTop: 4 }}>{ratingError}</div>}
       </div>

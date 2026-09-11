@@ -6,6 +6,8 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
 
 ### Added
 - **Reset configuration button** — Added `DELETE /api/session` and a "Change providers / reset config" link on the intake screen so users can return to the provider setup wizard. Works for both dev-mode in-memory config and Supabase persisted config.
+- **Client-side stage logging** — `page.tsx` now logs each pipeline stage transition to the browser console so live Vercel testing doesn't require dashboard log access.
+- **Non-blocking result save** — `/api/pipeline` no longer fails the whole request when the Supabase `sessions`/`results` insert fails. It returns the LLM output with a `saveError` warning, disables rating, and shows the error in the UI.
 
 ### Fixed
 - **DEVELOPER.md hemisphere wording** — Aligned "The Pipeline" stage descriptions with README roles (Left analytical vs Right creative/refine-not-replace) and fixed header typo. Docs-only, no app code touched.

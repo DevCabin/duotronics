@@ -74,8 +74,11 @@ async function handlePipeline(req: NextRequest) {
     { provider: config.right_provider, apiKey: config.right_key }
   )
 
-  // Save result (or mock in dev)
-  let resultId = 'dev-result-id'
+  // Save result (or mock in dev). Don't block returning the LLM output on DB errors.
+  let resultId: string | null = 'dev-result-id'
+  let sessionId: string | null = 'dev-session-id'
+  let saveError: string | null = null
+
   if (!isDevMode) {
     const { data: session, error: sessionError } = await supabase
       .from('sessions')
@@ -92,41 +95,39 @@ async function handlePipeline(req: NextRequest) {
 
     if (sessionError || !session) {
       console.error('[pipeline] session insert failed:', sessionError?.message, sessionError?.details, sessionError?.hint)
-      return NextResponse.json(
-        { error: 'Failed to save session', detail: sessionError?.message ?? 'unknown' },
-        { status: 500 }
-      )
-    }
+      saveError = `Failed to save session: ${sessionError?.message ?? 'unknown'}`
+    } else {
+      sessionId = session.id
 
-    const { data: savedResult, error: resultError } = await supabase
-      .from('results')
-      .insert({
-        session_id: session.id,
-        user_id: userId,
-        left_output: result.leftOutput,
-        final_output: result.finalOutput,
-        preflight_sanity: result.preflightSanity,
-        preflight_balance: result.preflightBalance,
-        preflight_quality: result.preflightQuality,
-        retry_count: result.retryCount,
-        fault_origin: result.faultOrigin,
-      })
-      .select()
-      .single()
+      const { data: savedResult, error: resultError } = await supabase
+        .from('results')
+        .insert({
+          session_id: session.id,
+          user_id: userId,
+          left_output: result.leftOutput,
+          final_output: result.finalOutput,
+          preflight_sanity: result.preflightSanity,
+          preflight_balance: result.preflightBalance,
+          preflight_quality: result.preflightQuality,
+          retry_count: result.retryCount,
+          fault_origin: result.faultOrigin,
+        })
+        .select()
+        .single()
 
-    if (resultError || !savedResult) {
-      console.error('[pipeline] result insert failed:', resultError?.message, resultError?.details, resultError?.hint)
-      return NextResponse.json(
-        { error: 'Failed to save result', detail: resultError?.message ?? 'unknown' },
-        { status: 500 }
-      )
+      if (resultError || !savedResult) {
+        console.error('[pipeline] result insert failed:', resultError?.message, resultError?.details, resultError?.hint)
+        saveError = `Failed to save result: ${resultError?.message ?? 'unknown'}`
+      } else {
+        resultId = savedResult.id
+      }
     }
-    resultId = savedResult.id
   }
 
   return NextResponse.json({
     resultId,
-    sessionId: isDevMode ? 'dev-session-id' : undefined,
+    sessionId,
+    saveError,
     ...result,
   })
 }

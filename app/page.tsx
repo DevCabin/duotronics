@@ -10,7 +10,7 @@ import Results from '@/app/components/results/Results'
 type Screen = 'loading' | 'auth' | 'wizard' | 'intake' | 'processing' | 'results'
 
 interface PipelineResult {
-  resultId: string
+  resultId: string | null
   leftOutput: string
   finalOutput: string
   preflightSanity: boolean
@@ -18,6 +18,7 @@ interface PipelineResult {
   preflightQuality: boolean
   faultOrigin: 'left' | 'right' | 'ambiguous' | null
   retryCount: number
+  saveError?: string
 }
 
 const STAGE_SUBTITLES: Record<string, string> = {
@@ -84,6 +85,7 @@ export default function Home() {
   }
 
   const updateStage = (id: StageId, status: 'active' | 'done') => {
+    console.log(`[client][stage] ${id}: ${status}`)
     setSubtitle(STAGE_SUBTITLES[id] ?? '')
     setStages(prev => prev.map(s => {
       if (s.id === id) return { ...s, status }

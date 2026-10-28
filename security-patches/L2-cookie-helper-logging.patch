@@ -1,0 +1,39 @@
+diff --git a/app/lib/supabase-server.ts b/app/lib/supabase-server.ts
+index 2aff195..b97e887 100644
+--- a/app/lib/supabase-server.ts
++++ b/app/lib/supabase-server.ts
+@@ -10,10 +10,15 @@ export function createServerSupabaseClient() {
+       cookies: {
+         get(name: string) { return cookieStore.get(name)?.value },
+         set(name: string, value: string, options: any) {
+-          try { cookieStore.set({ name, value, ...options }) } catch {}
++          try { cookieStore.set({ name, value, ...options }) } catch (e) {
++            // L2: surface auth state changes that fail silently instead of swallowing.
++            console.warn('[supabase-server] cookie set failed', name, (e as Error)?.message)
++          }
+         },
+         remove(name: string, options: any) {
+-          try { cookieStore.set({ name, value: '', ...options }) } catch {}
++          try { cookieStore.set({ name, value: '', ...options }) } catch (e) {
++            console.warn('[supabase-server] cookie remove failed', name, (e as Error)?.message)
++          }
+         },
+       },
+     }
+@@ -29,10 +34,14 @@ export function createServiceClient() {
+       cookies: {
+         get(name: string) { return cookieStore.get(name)?.value },
+         set(name: string, value: string, options: any) {
+-          try { cookieStore.set({ name, value, ...options }) } catch {}
++          try { cookieStore.set({ name, value, ...options }) } catch (e) {
++            console.warn('[supabase-server] cookie set failed', name, (e as Error)?.message)
++          }
+         },
+         remove(name: string, options: any) {
+-          try { cookieStore.set({ name, value: '', ...options }) } catch {}
++          try { cookieStore.set({ name, value: '', ...options }) } catch (e) {
++            console.warn('[supabase-server] cookie remove failed', name, (e as Error)?.message)
++          }
+         },
+       },
+     }

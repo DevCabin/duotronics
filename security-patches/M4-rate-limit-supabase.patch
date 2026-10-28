@@ -1,0 +1,106 @@
+# M4: rate-limit state moves to a Supabase-backed table. The in-memory Map
+# in app/lib/rate-limit.ts dies on Vercel cold-starts and is bypassable by
+# email-rotation under open signups.
+#
+# This patch creates app/lib/rate-limit-supabase.ts.
+#
+# The table migration now lives in supabase/migrations/005_rate_limit_state.sql
+# (RLS enabled, idempotent trigger), so this patch no longer carries a SQL hunk.
+#
+# The lib module is the same API but persisted. Existing in-memory
+# rate-limit.ts is left untouched (could be deprecated later via a code change
+# in /api/rate-limit).
+#
+--- /dev/null
++++ b/app/lib/rate-limit-supabase.ts
+@@ -0,0 +1,86 @@
++// M4: Supabase-backed rate-limit state. Replaces the in-memory Map.
++// Same semantics as app/lib/rate-limit.ts but state is persisted.
++
++import { createServerSupabaseClient } from './supabase-server'
++
++interface RateLimitRow {
++  attempts: number
++  lockout_count: number
++  lockout_until: string | null
++}
++
++const LOCKOUT_DURATIONS = [5 * 60 * 1000, 10 * 60 * 1000, 30 * 60 * 1000]
++
++async function readState(userId: string): Promise<RateLimitRow | null> {
++  const supabase = createServerSupabaseClient()
++  const { data } = await supabase
++    .from('rate_limit_state')
++    .select('attempts, lockout_count, lockout_until')
++    .eq('user_id', userId)
++    .single()
++  return data ?? null
++}
++
++async function writeState(userId: string, row: RateLimitRow): Promise<void> {
++  const supabase = createServerSupabaseClient()
++  await supabase
++    .from('rate_limit_state')
++    .upsert({ user_id: userId, ...row }, { onConflict: 'user_id' })
++}
++
++export async function checkRateLimit(userId: string) {
++  const now = Date.now()
++  const state = (await readState(userId)) ?? {
++    attempts: 0,
++    lockout_count: 0,
++    lockout_until: null,
++  }
++
++  const lockoutUntilMs = state.lockout_until
++    ? new Date(state.lockout_until).getTime()
++    : 0
++
++  if (lockoutUntilMs && now < lockoutUntilMs) {
++    if (state.lockout_count >= 4) {
++      return {
++        allowed: false,
++        message: "Come on... you're blocked. Reach out to assist in peer review.",
++        contactLink: true,
++      }
++    }
++    const minutesLeft = Math.ceil((lockoutUntilMs - now) / 60000)
++    return {
++      allowed: false,
++      message: `Too many attempts. Try again in ${minutesLeft} minute${minutesLeft > 1 ? 's' : ''}.`,
++    }
++  }
++
++  if (state.attempts >= 3) {
++    const lockoutCount = state.lockout_count + 1
++    const duration = LOCKOUT_DURATIONS[Math.min(lockoutCount - 1, LOCKOUT_DURATIONS.length - 1)]
++    const until = new Date(now + duration).toISOString()
++    await writeState(userId, { attempts: 0, lockout_count: lockoutCount, lockout_until: until })
++    if (lockoutCount >= 4) {
++      return {
++        allowed: false,
++        message: "Come on... you're blocked. Reach out to assist in peer review.",
++        contactLink: true,
++      }
++    }
++    return {
++      allowed: false,
++      message: `Too many attempts. Locked out for ${Math.ceil(duration / 60000)} minutes.`,
++    }
++  }
++
++  return { allowed: true }
++}
++
++export async function recordAttempt(userId: string): Promise<void> {
++  const state = (await readState(userId)) ?? {
++    attempts: 0,
++    lockout_count: 0,
++    lockout_until: null,
++  }
++  await writeState(userId, {
++    attempts: state.attempts + 1,
++    lockout_count: state.lockout_count,
++    lockout_until: state.lockout_until,
++  })
++}

@@ -24,6 +24,15 @@ All notable changes to Duotronics. Commit messages remain minimal; context lives
 
 ### Docs
 - **README / DEVELOPER updated for simplified pipeline** — Refreshed the "What This Is" pipeline and the Developer Guide's pipeline walkthrough to match the new Left → Right (process/verify/humanize) flow. Added a "Roadmap / Next Steps" section to both docs with a `[ ]` TODO for **user-selectable models per hemisphere** (choose the model under the chosen provider to broaden experiment parameters).
+- **Security scan artifacts committed** — `security-scan-spec.md`, `security-scan-report.md`, `scripts/security-scan.{sh,ts}` and the apply-ready patch set in `security-patches/`. Findings: 1 Critical + 6 High dependency advisories (all requiring a Next 15.x upgrade), plus 13 High / 7 Medium / 3 Low code findings. Verdict: NO-GO (conditional).
+- **Patch report corrected** — `security-scan-report.md` referenced first-pass patch filenames that were never generated (`H1-pipeline-rate-limit.patch` and six others). All references now point at the consolidated files that exist. Also fixed three incorrect claims: no migration 003 exists; H5 needs no data migration because `decryptKey` keeps a legacy 3-part path; H4 caches the scrypt key rather than going async. Added a re-verification section recording that 5 of the 11 patches are stale against current `HEAD`.
+
+### Database
+- **Migration 002** — `preflight_overall_pass` boolean + index on `public.results` (security finding H2).
+- **Migration 005** — `rate_limit_state` table for persistent lockout state (finding M4). Extracted from the patch into a real migration file with RLS enabled (the original left the table open to the anon key through PostgREST) and an idempotent trigger. **Not yet applied to any Supabase project.**
+
+### Notes
+- `cline_instructions.md` is local agent session guidance and is now gitignored.
 
 ## [0.3.1] - 2025-06-07
 

@@ -1,0 +1,100 @@
+diff --git a/app/lib/encryption.ts b/app/lib/encryption.ts
+index ef36fe2..7d7d755 100644
+--- a/app/lib/encryption.ts
++++ b/app/lib/encryption.ts
+@@ -1,34 +1,86 @@
+ // Simple AES-GCM encryption for API keys at rest
+ // Node.js crypto — runs server-side only
++// H5: ciphertext format is salt:iv:tag:enc (per-record salt).
+ 
+-import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto'
++import {
++  createCipheriv,
++  createDecipheriv,
++  createHash,
++  randomBytes,
++  scryptSync,
++} from 'crypto'
+ 
+ const ALGORITHM = 'aes-256-gcm'
++const SALT_BYTES = 16
+ 
+-function getKey(): Buffer {
++// H4: cache the derived base key. scryptSync runs at most ONCE per process —
++// after the first call, encrypt/decrypt use the cached key and stay out of
++// the Node event loop on the request path.
++let cachedBaseKey: Buffer | null = null
++function getCachedKey(): Buffer {
++  if (cachedBaseKey) return cachedBaseKey
+   const secret = process.env.ENCRYPTION_SECRET
+   if (!secret) throw new Error('ENCRYPTION_SECRET is not set')
+-  return scryptSync(secret, 'duotronics-salt', 32)
++  cachedBaseKey = scryptSync(secret, 'duotronics-salt', 32)
++  return cachedBaseKey
++}
++
++// H5: derive a per-record key from (baseKey, salt) using sha256. Two records
++// with the same plaintext but different salts produce different ciphertext,
++// blocking rainbow-table precomputations against the cached base key.
++function derivePerRecordKey(salt: Buffer): Buffer {
++  const baseKey = getCachedKey()
++  const h = createHash('sha256')
++  h.update(baseKey)
++  h.update(salt)
++  return h.digest()
+ }
+ 
+ export function encryptKey(plaintext: string): string {
++  const salt = randomBytes(SALT_BYTES)
+   const iv = randomBytes(12)
+-  const key = getKey()
++  const key = derivePerRecordKey(salt)
+   const cipher = createCipheriv(ALGORITHM, key, iv)
+   const encrypted = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()])
+   const tag = cipher.getAuthTag()
+-  // Format: iv:tag:encrypted (all hex)
+-  return [iv.toString('hex'), tag.toString('hex'), encrypted.toString('hex')].join(':')
++  return [
++    salt.toString('hex'),
++    iv.toString('hex'),
++    tag.toString('hex'),
++    encrypted.toString('hex'),
++  ].join(':')
+ }
+ 
+ export function decryptKey(ciphertext: string): string {
+-  const [ivHex, tagHex, encHex] = ciphertext.split(':')
+-  const key = getKey()
++  const parts = ciphertext.split(':')
++  // H5 back-compat: legacy 3-part iv:tag:enc was written before per-record
++  // salt landed. New format is 4-part salt:iv:tag:enc. Old rows decrypt
++  // cleanly with the cached base key; new rows use the per-record key.
++  if (parts.length === 4) {
++    const saltHex = parts[0]
++    const ivHex = parts[1]
++    const tagHex = parts[2]
++    const encHex = parts[3]
++    const salt = Buffer.from(saltHex, 'hex')
++    const key = derivePerRecordKey(salt)
++    const decipher = createDecipheriv(ALGORITHM, key, Buffer.from(ivHex, 'hex'))
++    decipher.setAuthTag(Buffer.from(tagHex, 'hex'))
++    const decrypted = Buffer.concat([
++      decipher.update(Buffer.from(encHex, 'hex')),
++      decipher.final(),
++    ])
++    return decrypted.toString('utf8')
++  }
++  // Legacy path
++  const ivHex = parts[0]
++  const tagHex = parts[1]
++  const encHex = parts[2]
++  const key = getCachedKey()
+   const decipher = createDecipheriv(ALGORITHM, key, Buffer.from(ivHex, 'hex'))
+   decipher.setAuthTag(Buffer.from(tagHex, 'hex'))
+   const decrypted = Buffer.concat([
+     decipher.update(Buffer.from(encHex, 'hex')),
+-    decipher.final()
++    decipher.final(),
+   ])
+   return decrypted.toString('utf8')
+ }

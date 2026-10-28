@@ -1,0 +1,54 @@
+diff --git a/app/api/session/route.ts b/app/api/session/route.ts
+index 7b04bd2..fdf07b0 100644
+--- a/app/api/session/route.ts
++++ b/app/api/session/route.ts
+@@ -2,16 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
+ import { createServerSupabaseClient } from '@/app/lib/supabase-server'
+ import { encryptKey } from '@/app/lib/encryption'
+ import { setDevConfig, getDevConfig } from '@/app/lib/dev-store'
++import { DEV_USER_ID, getDevBypassUserId } from '@/app/lib/dev-mode-guard'
++import { PROVIDER_KEY_PATTERNS, MAX_KEY_LENGTH, Provider } from '@/app/lib/providers'
+ 
+-const isDev = process.env.NODE_ENV === 'development'
+-const DEV_USER_ID = 'dev-user'
+-
+-function getUserId(req: NextRequest): string | null {
+-  if (isDev && req.headers.get('x-dev-bypass') === 'true') {
+-    return DEV_USER_ID
+-  }
+-  return null
+-}
++// H3: getUserId is a thin wrapper around the centralized dev-mode-guard.
++const getUserId = (req: NextRequest) => getDevBypassUserId(req)
+ 
+ export async function POST(req: NextRequest) {
+   const supabase = createServerSupabaseClient()
+@@ -30,12 +25,27 @@ export async function POST(req: NextRequest) {
+     return NextResponse.json({ error: 'Left and Right providers must be different' }, { status: 400 })
+   }
+ 
++  // M2: per-provider key shape validation (regex + max length).
++  const leftKeyTrim = String(leftKey).trim()
++  const rightKeyTrim = String(rightKey).trim()
++  if (leftKeyTrim.length === 0 || rightKeyTrim.length === 0) {
++    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
++  }
++  if (leftKeyTrim.length > MAX_KEY_LENGTH || rightKeyTrim.length > MAX_KEY_LENGTH) {
++    return NextResponse.json({ error: 'API key too long' }, { status: 400 })
++  }
++  const lp = PROVIDER_KEY_PATTERNS[leftProvider as Provider]
++  const rp = PROVIDER_KEY_PATTERNS[rightProvider as Provider]
++  if (!lp.test(leftKeyTrim) || !rp.test(rightKeyTrim)) {
++    return NextResponse.json({ error: 'API key shape invalid for the selected provider' }, { status: 400 })
++  }
++
+   // Dev mode: store in memory
+   if (userId === DEV_USER_ID) {
+     setDevConfig({
+       left_provider: leftProvider,
+       right_provider: rightProvider,
+-      left_key: leftKey, // plain in dev
++      left_key: leftKey, // plain in dev (M1 encrypts at rest)
+       right_key: rightKey,
+     })
+     return NextResponse.json({ success: true })

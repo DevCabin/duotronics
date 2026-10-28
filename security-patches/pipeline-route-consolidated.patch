@@ -1,0 +1,95 @@
+diff --git a/app/api/pipeline/route.ts b/app/api/pipeline/route.ts
+index b049502..8274649 100644
+--- a/app/api/pipeline/route.ts
++++ b/app/api/pipeline/route.ts
+@@ -3,16 +3,11 @@ import { createServerSupabaseClient } from '@/app/lib/supabase-server'
+ import { decryptKey } from '@/app/lib/encryption'
+ import { runPipeline, QueryObject } from '@/app/lib/pipeline'
+ import { getDevConfig } from '@/app/lib/dev-store'
++import { DEV_USER_ID, getDevBypassUserId } from '@/app/lib/dev-mode-guard'
++import { checkRateLimit } from '@/app/lib/rate-limit'
+ 
+-const isDev = process.env.NODE_ENV === 'development'
+-const DEV_USER_ID = 'dev-user'
+-
+-function getUserId(req: NextRequest): string | null {
+-  if (isDev && req.headers.get('x-dev-bypass') === 'true') {
+-    return DEV_USER_ID
+-  }
+-  return null
+-}
++// H3: getUserId is a thin wrapper around the centralized dev-mode-guard.
++const getUserId = (req: NextRequest) => getDevBypassUserId(req)
+ 
+ export async function POST(req: NextRequest) {
+   const supabase = createServerSupabaseClient()
+@@ -22,6 +17,19 @@ export async function POST(req: NextRequest) {
+   
+   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+ 
++  // H1+M5: per-user rate limit on the cost-bearing pipeline route.
++  if (!isDevMode) {
++    const rl = checkRateLimit(`pipeline:${userId}`)
++    if (!rl.allowed) {
++      return NextResponse.json(
++        { error: rl.message ?? 'Too many requests' },
++        { status: 429 }
++      )
++    }
++  }
++  // H1: 90-second hard timeout on the pipeline.
++  const PIPELINE_TIMEOUT_MS = 90_000
++
+   const body = await req.json()
+   const query: QueryObject = { q1: body.q1, q2: body.q2, q3: body.q3 }
+ 
+@@ -49,12 +57,22 @@ export async function POST(req: NextRequest) {
+     }
+   }
+ 
+-  // Run pipeline
+-  const result = await runPipeline(
++  // Run pipeline with 90s timeout guard (H1).
++  const pipelineCall = runPipeline(
+     query,
+     { provider: config.left_provider, apiKey: config.left_key },
+     { provider: config.right_provider, apiKey: config.right_key }
+   )
++  const timeout = new Promise<never>((_, reject) =>
++    setTimeout(() => reject(new Error('pipeline_timeout')), PIPELINE_TIMEOUT_MS)
++  )
++  const result = await Promise.race([pipelineCall, timeout]).catch(err => {
++    if ((err as Error).message === 'pipeline_timeout') return null
++    throw err
++  })
++  if (result === null) {
++    return NextResponse.json({ error: 'Pipeline timed out' }, { status: 504 })
++  }
+ 
+   // Save result (or mock in dev)
+   let resultId = 'dev-result-id'
+@@ -76,6 +94,16 @@ export async function POST(req: NextRequest) {
+       return NextResponse.json({ error: 'Failed to save session' }, { status: 500 })
+     }
+ 
++    // M7: cap output size before insert.
++    const MAX_OUTPUT_BYTES = 64 * 1024
++    if (Buffer.byteLength(result.leftOutput, 'utf8') > MAX_OUTPUT_BYTES ||
++        Buffer.byteLength(result.finalOutput, 'utf8') > MAX_OUTPUT_BYTES) {
++      return NextResponse.json(
++        { error: 'Output too large to persist' },
++        { status: 413 }
++      )
++    }
++
+     const { data: savedResult, error: resultError } = await supabase
+       .from('results')
+       .insert({
+@@ -86,6 +114,7 @@ export async function POST(req: NextRequest) {
+         preflight_sanity: result.preflightSanity,
+         preflight_balance: result.preflightBalance,
+         preflight_quality: result.preflightQuality,
++        preflight_overall_pass: result.preflightSanity && result.preflightBalance && result.preflightQuality,
+         retry_count: result.retryCount,
+         fault_origin: result.faultOrigin,
+       })

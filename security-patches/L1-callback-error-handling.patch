@@ -1,0 +1,26 @@
+diff --git a/app/auth/callback/route.ts b/app/auth/callback/route.ts
+index 6ac926e..b1e7909 100644
+--- a/app/auth/callback/route.ts
++++ b/app/auth/callback/route.ts
+@@ -26,9 +26,18 @@ export async function GET(request: NextRequest) {
+       }
+     )
+     
+-    await supabase.auth.exchangeCodeForSession(code)
++    // L1: catch code-exchange errors. On failure, redirect with ?error=auth_failed
++    // so the Auth UI can read the param and explain instead of leaving the user
++    // in a half-authenticated state.
++    try {
++      await supabase.auth.exchangeCodeForSession(code)
++    } catch {
++      const errUrl = new URL(requestUrl.origin)
++      errUrl.searchParams.set('error', 'auth_failed')
++      return NextResponse.redirect(errUrl)
++    }
+   }
+ 
+   // URL to redirect to after sign up
+   return NextResponse.redirect(requestUrl.origin)
+-}
+\ No newline at end of file
++}

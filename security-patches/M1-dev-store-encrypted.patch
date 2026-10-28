@@ -1,0 +1,52 @@
+diff --git a/app/lib/dev-store.ts b/app/lib/dev-store.ts
+index e7c47a9..5b35f55 100644
+--- a/app/lib/dev-store.ts
++++ b/app/lib/dev-store.ts
+@@ -1,19 +1,41 @@
+ // Dev mode in-memory store shared between API routes
+ // Only used when NODE_ENV === 'development'
+ 
++import { encryptKey, decryptKey } from './encryption'
++
+ export interface DevConfig {
+   left_provider: string
+   right_provider: string
+-  left_key: string
++  left_key: string  // plaintext (decrypted on read for callers)
+   right_key: string
+ }
+ 
+-let devConfig: DevConfig | null = null
++// M1: keys stored encrypted at rest in module memory so a console.log or
++// memory dump doesn't exfiltrate plaintext LLM provider keys.
++interface EncryptedDevConfig {
++  left_provider: string
++  right_provider: string
++  left_key_ct: string  // ciphertext (decrypted on read)
++  right_key_ct: string
++}
++
++let encConfig: EncryptedDevConfig | null = null
+ 
+ export function setDevConfig(config: DevConfig) {
+-  devConfig = config
++  encConfig = {
++    left_provider: config.left_provider,
++    right_provider: config.right_provider,
++    left_key_ct: encryptKey(config.left_key),
++    right_key_ct: encryptKey(config.right_key),
++  }
+ }
+ 
+ export function getDevConfig(): DevConfig | null {
+-  return devConfig
+-}
+\ No newline at end of file
++  if (!encConfig) return null
++  return {
++    left_provider: encConfig.left_provider,
++    right_provider: encConfig.right_provider,
++    left_key: decryptKey(encConfig.left_key_ct),
++    right_key: decryptKey(encConfig.right_key_ct),
++  }
++}

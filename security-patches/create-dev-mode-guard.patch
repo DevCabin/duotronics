@@ -1,0 +1,34 @@
+# create-dev-mode-guard.patch
+#
+# H3: creates the centralized dev-mode gate helper. Replaces ad-hoc
+# `if (isDev && req.headers.get('x-dev-bypass') === 'true')` checks
+# scattered across routes.
+#
+# The helper additionally rejects VERCEL_ENV=preview so Vercel preview
+# deployments never get the dev-mode identity even if NODE_ENV slips.
+#
+--- /dev/null
++++ b/app/lib/dev-mode-guard.ts
+@@ -0,0 +1,21 @@
++import { NextRequest } from 'next/server'
++
++// Distinct from any real-supabase auth.uid() format so leakage detection
++// (queries that look for auth.uid() shape) can spot dev rows.
++export const DEV_USER_ID = 'dev-user'
++
++// True ONLY for genuine local development, not for Vercel preview deploys.
++export function isDevLocal(): boolean {
++  if (process.env.NODE_ENV !== 'development') return false
++  if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production') {
++    return false
++  }
++  return true
++}
++
++// Returns DEV_USER_ID iff the caller is running locally AND sends the
++// explicit bypass header. Server-side only — never trust this on the client.
++export function getDevBypassUserId(req: NextRequest): string | null {
++  if (!isDevLocal()) return null
++  if (req.headers.get('x-dev-bypass') === 'true') return DEV_USER_ID
++  return null
++}

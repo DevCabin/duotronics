@@ -1,0 +1,25 @@
+# L3: pin security-critical production deps to tilde ranges instead of
+# caret. Tilde allows patch+minor fixes in auto `npm install` but blocks
+# silent major jumps. Non-security-critical UI deps (react/react-dom)
+# stay caret-managed to avoid coupling.
+#
+# Note: this patch does NOT change next (DEPS-1/2 — track-only) or add
+# major version bounds that would force an upgrade.
+#
+--- a/package.json
++++ b/package.json
+@@ -8,10 +8,10 @@
+   "dependencies": {
+-    "@anthropic-ai/sdk": "^0.24.0",
+-    "@google/generative-ai": "^0.15.0",
++    "@anthropic-ai/sdk": "~0.24.0",
++    "@google/generative-ai": "~0.15.0",
+     "@supabase/supabase-js": "^2.43.0",
+-    "@supabase/ssr": "^0.4.0",
++    "@supabase/ssr": "~0.4.0",
+     "next": "14.2.3",
+-    "openai": "^4.52.0",
++    "openai": "~4.52.0",
+     "react": "^18",
+     "react-dom": "^18"
+   },
